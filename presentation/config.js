@@ -49,6 +49,32 @@ const config = {
           title: "教师管理页面演示"
         }
       ]
+    },
+    {
+      src: "pages/08-solution-explore.html",
+      title: "方案探索对比",
+      assets: []
+    },
+    {
+      src: "pages/09-tech-handoff.html",
+      title: "技术对接对比",
+      assets: []
+    },
+    {
+      src: "pages/10-data-visualization.html",
+      title: "数据可视化对比",
+      assets: [
+        {
+          type: "page",
+          src: "assets/demos/dashboard.html",
+          title: "数据统计仪表盘演示"
+        }
+      ]
+    },
+    {
+      src: "pages/11-flowchart.html",
+      title: "流程图对比",
+      assets: []
     }
   ]
 };
