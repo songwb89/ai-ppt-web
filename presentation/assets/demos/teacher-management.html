@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教师管理 - 后台管理系统</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    }
+    /* 自定义滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* 表格行悬停动画 */
+    .table-row {
+      transition: all 0.2s ease;
+    }
+    .table-row:hover {
+      background-color: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    /* 日期范围选择器动画 */
+    #dateRangePicker {
+      animation: slideDown 0.2s ease-out;
+    }
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 h-screen overflow-hidden flex flex-col">
+  <!-- 顶部面包屑 -->
+  <div class="bg-white border-b border-gray-200/60 shadow-sm px-6 py-4 flex-shrink-0 backdrop-blur-sm">
+    <nav class="flex items-center space-x-2 text-sm">
+      <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center">
+        <i class="fas fa-home mr-1.5"></i>系统首页
+      </a>
+      <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+      <span class="text-gray-900 font-semibold">教师管理</span>
+    </nav>
+  </div>
+
+  <!-- 操作栏（固定） -->
+  <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200/60 shadow-sm p-6 flex-shrink-0">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">教师管理</h1>
+        <p class="text-sm text-gray-500 mt-1">管理系统教师信息</p>
+      </div>
+      <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-xl flex items-center space-x-2 transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105">
+        <i class="fas fa-plus"></i>
+        <span class="font-medium">添加教师</span>
+      </button>
+    </div>
+
+    <!-- 筛选条件 -->
+    <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-5 border border-gray-200/60 shadow-sm mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">姓名</label>
+          <input type="text" id="filterName" placeholder="请输入姓名" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">手机/邮箱</label>
+          <input type="text" id="filterContact" placeholder="手机或邮箱" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">关联院校</label>
+          <select id="filterLinkedSchool" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+            <option value="">全部</option>
+            <option value="1">北京大学</option>
+            <option value="2">清华大学</option>
+            <option value="3">复旦大学</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">任职院校</label>
+          <select id="filterWorkSchool" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+            <option value="">全部</option>
+            <option value="1">北京大学</option>
+            <option value="2">清华大学</option>
+            <option value="3">复旦大学</option>
+          </select>
+        </div>
+        <div class="relative">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">创建时间</label>
+          <input type="text" id="filterCreateTime" readonly placeholder="请选择日期范围" onclick="toggleDateRangePicker()" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">启用状态</label>
+          <select id="filterStatus" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+            <option value="">全部</option>
+            <option value="1">启用</option>
+            <option value="0">禁用</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 筛选按钮 -->
+      <div class="flex items-center space-x-3">
+        <button onclick="applyFilters()" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 transition-all duration-200 shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 hover:scale-105 font-medium">
+          <i class="fas fa-search"></i>
+          <span>查询</span>
+        </button>
+        <button onclick="resetFilters()" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 hover:border-gray-400 px-6 py-2.5 rounded-xl flex items-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md font-medium">
+          <i class="fas fa-redo"></i>
+          <span>重置</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 教师列表表格（可滚动区域） -->
+  <div class="flex-1 overflow-auto p-6">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden h-full flex flex-col border border-gray-200/60">
+      <div class="flex-1 overflow-auto">
+        <table class="w-full">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">序号</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200/50 transition-colors duration-200" onclick="sortBy('name')">
+                <div class="flex items-center space-x-2">
+                  <span>姓名</span>
+                  <i class="fas fa-sort text-gray-400 text-xs" id="sortName"></i>
+                </div>
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">手机号</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">邮箱</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">任职院校</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">关联院校</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200/50 transition-colors duration-200" onclick="sortBy('createTime')">
+                <div class="flex items-center space-x-2">
+                  <span>创建时间</span>
+                  <i class="fas fa-sort text-gray-400 text-xs" id="sortCreateTime"></i>
+                </div>
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200/50 transition-colors duration-200" onclick="sortBy('lastLogin')">
+                <div class="flex items-center space-x-2">
+                  <span>最后登录时间</span>
+                  <i class="fas fa-sort text-gray-400 text-xs" id="sortLastLogin"></i>
+                </div>
+              </th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">启用状态</th>
+              <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">操作</th>
+            </tr>
+          </thead>
+          <tbody id="teacherTableBody" class="bg-white divide-y divide-gray-100">
+            <!-- 数据将通过 JavaScript 动态生成 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页组件 -->
+      <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-t border-gray-200 flex items-center justify-between flex-shrink-0">
+        <div class="text-sm text-gray-600 font-medium">
+          共 <span id="totalCount" class="text-blue-600 font-bold">0</span> 条记录，第 <span id="currentPage" class="text-blue-600 font-bold">1</span> / <span id="totalPages" class="text-blue-600 font-bold">1</span> 页
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="changePage(-1)" id="prevBtn" class="px-4 py-2 border border-gray-300 rounded-xl hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div id="pageNumbers" class="flex items-center space-x-1">
+            <!-- 页码按钮 -->
+          </div>
+          <button onclick="changePage(1)" id="nextBtn" class="px-4 py-2 border border-gray-300 rounded-xl hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加教师模态框 -->
+  <div id="addModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border border-gray-200/60 transform transition-all duration-300 scale-95">
+      <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white flex items-center justify-between rounded-t-2xl">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">添加教师</h2>
+        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2 transition-all duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="addForm" class="p-6 space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">邮箱 <span class="text-red-500">*</span></label>
+            <input type="email" name="email" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">密码 <span class="text-red-500">*</span></label>
+            <input type="password" name="password" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">姓名 <span class="text-red-500">*</span></label>
+            <input type="text" name="name" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">关联院校 <span class="text-red-500">*</span></label>
+            <select name="linkedSchool" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+              <option value="">请选择</option>
+              <option value="1">北京大学</option>
+              <option value="2">清华大学</option>
+              <option value="3">复旦大学</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">任职院校</label>
+            <select name="workSchool" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+              <option value="">请选择</option>
+              <option value="1">北京大学</option>
+              <option value="2">清华大学</option>
+              <option value="3">复旦大学</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">任职专业</label>
+            <input type="text" name="major" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">职位</label>
+            <input type="text" name="position" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">简介</label>
+          <textarea name="bio" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"></textarea>
+        </div>
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button type="button" onclick="closeAddModal()" class="px-6 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md">取消</button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 font-medium shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105">确定</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 编辑教师模态框 -->
+  <div id="editModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border border-gray-200/60 transform transition-all duration-300 scale-95">
+      <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white flex items-center justify-between rounded-t-2xl">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">编辑教师</h2>
+        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2 transition-all duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="editForm" class="p-6 space-y-5">
+        <input type="hidden" name="id" id="editId">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">邮箱 <span class="text-red-500">*</span></label>
+            <input type="email" name="email" id="editEmail" required disabled class="w-full px-4 py-2.5 border border-gray-300 rounded-xl bg-gray-100 cursor-not-allowed opacity-70">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">姓名 <span class="text-red-500">*</span></label>
+            <input type="text" name="name" id="editName" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">关联院校 <span class="text-red-500">*</span></label>
+            <select name="linkedSchool" id="editLinkedSchool" required disabled class="w-full px-4 py-2.5 border border-gray-300 rounded-xl bg-gray-100 cursor-not-allowed opacity-70">
+              <option value="">请选择</option>
+              <option value="1">北京大学</option>
+              <option value="2">清华大学</option>
+              <option value="3">复旦大学</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">任职院校</label>
+            <select name="workSchool" id="editWorkSchool" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+              <option value="">请选择</option>
+              <option value="1">北京大学</option>
+              <option value="2">清华大学</option>
+              <option value="3">复旦大学</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">任职专业</label>
+            <input type="text" name="major" id="editMajor" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">职位</label>
+            <input type="text" name="position" id="editPosition" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">简介</label>
+          <textarea name="bio" id="editBio" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-none"></textarea>
+        </div>
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button type="button" onclick="closeEditModal()" class="px-6 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md">取消</button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 font-medium shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105">确定</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 重置密码模态框 -->
+  <div id="resetPasswordModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-200/60 transform transition-all duration-300 scale-95">
+      <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-white flex items-center justify-between rounded-t-2xl">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">重置密码</h2>
+        <button onclick="closeResetPasswordModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2 transition-all duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="resetPasswordForm" class="p-6 space-y-5">
+        <input type="hidden" name="id" id="resetPasswordId">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">新密码 <span class="text-red-500">*</span></label>
+          <input type="password" name="newPassword" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">确认密码 <span class="text-red-500">*</span></label>
+          <input type="password" name="confirmPassword" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md">
+        </div>
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button type="button" onclick="closeResetPasswordModal()" class="px-6 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md">取消</button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl transition-all duration-200 font-medium shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 hover:scale-105">确定</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 修改院校模态框 -->
+  <div id="changeSchoolModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-200/60 transform transition-all duration-300 scale-95">
+      <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-white flex items-center justify-between rounded-t-2xl">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">修改院校</h2>
+        <button onclick="closeChangeSchoolModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2 transition-all duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="changeSchoolForm" class="p-6 space-y-5">
+        <input type="hidden" name="id" id="changeSchoolId">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">关联院校 <span class="text-red-500">*</span></label>
+          <select name="linkedSchool" id="changeSchoolSelect" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md cursor-pointer">
+            <option value="">请选择</option>
+            <option value="1">北京大学</option>
+            <option value="2">清华大学</option>
+            <option value="3">复旦大学</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button type="button" onclick="closeChangeSchoolModal()" class="px-6 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium shadow-sm hover:shadow-md">取消</button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl transition-all duration-200 font-medium shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:scale-105">确定</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 日期范围选择器面板（移到 body 层级以确保最高优先级） -->
+  <div id="dateRangePicker" class="hidden fixed bg-white rounded-xl shadow-2xl border border-gray-200/60 p-5" style="z-index: 10000; min-width: 500px;">
+    <div class="flex items-center space-x-4 mb-4">
+      <div class="flex-1">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">开始日期</label>
+        <input type="date" id="filterCreateTimeStart" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm">
+      </div>
+      <div class="flex-1">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">结束日期</label>
+        <input type="date" id="filterCreateTimeEnd" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm">
+      </div>
+    </div>
+    <div class="flex items-center justify-end space-x-3 pt-3 border-t border-gray-200">
+      <button type="button" onclick="clearDateRange()" class="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200 font-medium">
+        清空
+      </button>
+      <button type="button" onclick="applyDateRange()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 font-medium shadow-md shadow-blue-500/30 hover:shadow-lg">
+        确定
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 模拟数据
+    let teachers = [
+      { id: 1, name: '张伟', phone: '13800138001', email: 'zhang@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-01-15 10:30:00', lastLogin: '2024-03-20 14:25:00', status: 1, major: '计算机科学', position: '教授', bio: '计算机科学领域资深专家' },
+      { id: 2, name: '李娜', phone: '13900139002', email: 'li@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-02-10 09:15:00', lastLogin: '2024-03-19 16:40:00', status: 1, major: '数学', position: '副教授', bio: '数学教学经验丰富' },
+      { id: 3, name: '王磊', phone: '', email: 'wang@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-02-20 11:20:00', lastLogin: '', status: 0, major: '物理', position: '讲师', bio: '' },
+      { id: 4, name: '赵云', phone: '13700137004', email: 'zhao@example.com', workSchool: '', linkedSchool: '北京大学', createTime: '2024-03-01 08:45:00', lastLogin: '2024-03-18 10:30:00', status: 1, major: '化学', position: '教授', bio: '化学工程专业' },
+      { id: 5, name: '刘敏', phone: '13600136005', email: '', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-03-05 14:10:00', lastLogin: '2024-03-17 09:20:00', status: 1, major: '', position: '副教授', bio: '教学经验丰富' },
+      { id: 6, name: '陈静', phone: '13500135006', email: 'chen@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-01-20 15:20:00', lastLogin: '2024-03-21 11:15:00', status: 1, major: '生物科学', position: '教授', bio: '生物学研究专家，发表多篇SCI论文' },
+      { id: 7, name: '杨洋', phone: '13400134007', email: 'yang@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-02-05 09:30:00', lastLogin: '2024-03-20 16:45:00', status: 1, major: '电子工程', position: '副教授', bio: '电子工程专业，擅长电路设计' },
+      { id: 8, name: '周琪', phone: '', email: 'zhou@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-02-12 10:00:00', lastLogin: '2024-03-19 14:20:00', status: 1, major: '历史学', position: '讲师', bio: '历史学专业，研究方向为中国古代史' },
+      { id: 9, name: '吴俊', phone: '13300133009', email: '', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-02-18 11:45:00', lastLogin: '', status: 0, major: '材料科学', position: '教授', bio: '材料科学领域专家' },
+      { id: 10, name: '郑爽', phone: '13200132010', email: 'zheng@example.com', workSchool: '', linkedSchool: '清华大学', createTime: '2024-02-25 13:15:00', lastLogin: '2024-03-18 10:00:00', status: 1, major: '机械工程', position: '副教授', bio: '机械设计与制造专业' },
+      { id: 11, name: '孙璐', phone: '13100131011', email: 'sun@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-03-02 08:20:00', lastLogin: '2024-03-21 09:30:00', status: 1, major: '经济学', position: '讲师', bio: '经济学理论教学' },
+      { id: 12, name: '钱志强', phone: '', email: 'qian@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-03-08 14:50:00', lastLogin: '2024-03-20 15:10:00', status: 1, major: '物理学', position: '教授', bio: '理论物理研究，量子力学方向' },
+      { id: 13, name: '冯晨', phone: '13000130013', email: '', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-03-10 10:25:00', lastLogin: '', status: 0, major: '化学工程', position: '副教授', bio: '' },
+      { id: 14, name: '蒋慧', phone: '15900159014', email: 'jiang@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-03-12 16:40:00', lastLogin: '2024-03-19 11:20:00', status: 1, major: '文学', position: '讲师', bio: '现当代文学研究' },
+      { id: 15, name: '沈立', phone: '15800158015', email: 'shen@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-03-15 09:10:00', lastLogin: '2024-03-21 13:45:00', status: 1, major: '医学', position: '教授', bio: '临床医学专家，心血管方向' },
+      { id: 16, name: '韩雪', phone: '', email: 'han@example.com', workSchool: '', linkedSchool: '清华大学', createTime: '2024-03-18 11:30:00', lastLogin: '2024-03-20 14:00:00', status: 1, major: '环境科学', position: '副教授', bio: '环境保护与治理' },
+      { id: 17, name: '朱鹏', phone: '15700157017', email: '', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-01-25 15:00:00', lastLogin: '2024-03-18 16:30:00', status: 1, major: '心理学', position: '讲师', bio: '应用心理学教学' },
+      { id: 18, name: '秦川', phone: '15600156018', email: 'qin@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-02-08 10:15:00', lastLogin: '', status: 0, major: '法学', position: '教授', bio: '法学理论，宪法学方向' },
+      { id: 19, name: '尤楠', phone: '15500155019', email: 'you@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-02-15 13:25:00', lastLogin: '2024-03-21 10:15:00', status: 1, major: '建筑学', position: '副教授', bio: '建筑设计理论与实践' },
+      { id: 20, name: '许婷婷', phone: '', email: '', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-02-22 14:40:00', lastLogin: '2024-03-19 15:50:00', status: 1, major: '艺术设计', position: '讲师', bio: '视觉传达设计' },
+      { id: 21, name: '何强', phone: '15400154021', email: 'he@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-03-03 08:50:00', lastLogin: '2024-03-20 12:30:00', status: 1, major: '信息科学', position: '教授', bio: '信息管理与信息系统' },
+      { id: 22, name: '吕媛', phone: '15300153022', email: 'lv@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-03-06 11:20:00', lastLogin: '', status: 0, major: '统计学', position: '副教授', bio: '统计分析与数据挖掘' },
+      { id: 23, name: '施栋', phone: '', email: 'shi@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-03-09 15:35:00', lastLogin: '2024-03-18 09:45:00', status: 1, major: '新闻学', position: '讲师', bio: '新闻传播理论与实践' },
+      { id: 24, name: '张蕾', phone: '15200152024', email: '', workSchool: '', linkedSchool: '北京大学', createTime: '2024-03-11 10:05:00', lastLogin: '2024-03-21 14:20:00', status: 1, major: '哲学', position: '教授', bio: '中国哲学研究' },
+      { id: 25, name: '孔瑞', phone: '15100151025', email: 'kong@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-03-13 12:15:00', lastLogin: '2024-03-20 11:00:00', status: 1, major: '教育学', position: '副教授', bio: '教育心理学与教学方法' },
+      { id: 26, name: '曹宁', phone: '', email: 'cao@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-03-14 16:25:00', lastLogin: '', status: 0, major: '社会学', position: '教授', bio: '社会调查与研究方法' },
+      { id: 27, name: '严文博', phone: '15000150027', email: '', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-03-16 09:40:00', lastLogin: '2024-03-19 13:15:00', status: 1, major: '地理学', position: '讲师', bio: '人文地理与区域规划' },
+      { id: 28, name: '华晓珊', phone: '14900149028', email: 'hua@example.com', workSchool: '清华大学', linkedSchool: '清华大学', createTime: '2024-03-17 14:10:00', lastLogin: '2024-03-21 16:00:00', status: 1, major: '体育学', position: '副教授', bio: '运动训练与体育教学' },
+      { id: 29, name: '金晨', phone: '', email: 'jin@example.com', workSchool: '复旦大学', linkedSchool: '复旦大学', createTime: '2024-03-19 10:55:00', lastLogin: '2024-03-20 15:30:00', status: 1, major: '音乐学', position: '教授', bio: '音乐理论与演奏' },
+      { id: 30, name: '魏江南', phone: '14800148030', email: 'wei@example.com', workSchool: '北京大学', linkedSchool: '北京大学', createTime: '2024-03-20 13:20:00', lastLogin: '2024-03-21 08:45:00', status: 1, major: '外语', position: '讲师', bio: '英语教学与翻译' },
+    ];
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let sortField = '';
+    let sortOrder = 'asc';
+    let filteredTeachers = [...teachers];
+
+    // 学校映射
+    const schoolMap = {
+      '1': '北京大学',
+      '2': '清华大学',
+      '3': '复旦大学'
+    };
+
+    // 初始化
+    function init() {
+      renderTable();
+      updatePagination();
+      
+      // 点击外部关闭日期范围选择器
+      document.addEventListener('click', (e) => {
+        const picker = document.getElementById('dateRangePicker');
+        const input = document.getElementById('filterCreateTime');
+        
+        if (picker && !picker.classList.contains('hidden')) {
+          // 如果点击的不是日期选择器本身，也不是输入框，则关闭
+          if (!picker.contains(e.target) && e.target !== input && !input.contains(e.target)) {
+            picker.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const tbody = document.getElementById('teacherTableBody');
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageData = filteredTeachers.slice(start, end);
+
+      tbody.innerHTML = pageData.map((teacher, index) => `
+        <tr class="table-row border-b border-gray-100">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600">${start + index + 1}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${teacher.name || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${teacher.phone || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${teacher.email || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${teacher.workSchool || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${teacher.linkedSchool || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${teacher.createTime || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${teacher.lastLogin || '<span class="text-gray-400">--</span>'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" ${teacher.status === 1 ? 'checked' : ''} onchange="toggleStatus(${teacher.id})" class="sr-only peer">
+              <div class="w-12 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-blue-600 shadow-inner"></div>
+            </label>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <div class="flex items-center space-x-2">
+              <button onclick="openEditModal(${teacher.id})" class="text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md border border-blue-100 hover:border-blue-200">
+                编辑
+              </button>
+              <button onclick="openResetPasswordModal(${teacher.id})" class="text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md border border-green-100 hover:border-green-200">
+                重置密码
+              </button>
+              <button onclick="openChangeSchoolModal(${teacher.id})" class="text-purple-600 hover:text-purple-700 hover:bg-purple-50 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md border border-purple-100 hover:border-purple-200">
+                修改院校
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 更新分页
+    function updatePagination() {
+      const total = filteredTeachers.length;
+      const totalPages = Math.ceil(total / pageSize);
+      
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('currentPage').textContent = currentPage;
+      document.getElementById('totalPages').textContent = totalPages;
+
+      // 更新按钮状态
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages;
+
+      // 渲染页码
+      const pageNumbers = document.getElementById('pageNumbers');
+      pageNumbers.innerHTML = '';
+      
+      const maxVisible = 5;
+      let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      let end = Math.min(totalPages, start + maxVisible - 1);
+      start = Math.max(1, end - maxVisible + 1);
+
+      for (let i = start; i <= end; i++) {
+        const btn = document.createElement('button');
+        btn.className = `px-4 py-2 border rounded-xl transition-all duration-200 font-medium ${i === currentPage ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-md shadow-blue-500/30' : 'border-gray-300 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 text-gray-700 shadow-sm hover:shadow-md'}`;
+        btn.textContent = i;
+        btn.onclick = () => goToPage(i);
+        pageNumbers.appendChild(btn);
+      }
+    }
+
+    // 跳转页面
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+      updatePagination();
+    }
+
+    // 切换页面
+    function changePage(direction) {
+      const totalPages = Math.ceil(filteredTeachers.length / pageSize);
+      const newPage = currentPage + direction;
+      if (newPage >= 1 && newPage <= totalPages) {
+        goToPage(newPage);
+      }
+    }
+
+    // 排序
+    function sortBy(field) {
+      if (sortField === field) {
+        sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortField = field;
+        sortOrder = 'asc';
+      }
+
+      // 更新排序图标
+      document.querySelectorAll('[id^="sort"]').forEach(el => {
+        el.className = 'fas fa-sort ml-1 text-gray-400';
+      });
+
+      const iconId = `sort${field.charAt(0).toUpperCase() + field.slice(1)}`;
+      const icon = document.getElementById(iconId);
+      if (icon) {
+        icon.className = `fas fa-sort-${sortOrder === 'asc' ? 'up' : 'down'} ml-1 text-blue-600`;
+      }
+
+      filteredTeachers.sort((a, b) => {
+        let aVal = a[field === 'name' ? 'name' : field === 'createTime' ? 'createTime' : 'lastLogin'] || '';
+        let bVal = b[field === 'name' ? 'name' : field === 'createTime' ? 'createTime' : 'lastLogin'] || '';
+        
+        if (sortOrder === 'asc') {
+          return aVal.localeCompare(bVal);
+        } else {
+          return bVal.localeCompare(aVal);
+        }
+      });
+
+      currentPage = 1;
+      renderTable();
+      updatePagination();
+    }
+
+    // 日期范围选择器相关变量
+    let createTimeStart = '';
+    let createTimeEnd = '';
+
+    // 切换日期范围选择器显示
+    function toggleDateRangePicker() {
+      const picker = document.getElementById('dateRangePicker');
+      const input = document.getElementById('filterCreateTime');
+      
+      if (picker.classList.contains('hidden')) {
+        // 计算输入框的位置
+        const rect = input.getBoundingClientRect();
+        
+        // 设置日期选择器的位置（使用 fixed 定位，相对于视口）
+        let top = rect.bottom + 8;
+        let left = rect.left;
+        
+        // 检查右边界，如果超出则调整
+        const pickerWidth = 500; // min-w-[500px]
+        if (left + pickerWidth > window.innerWidth) {
+          left = window.innerWidth - pickerWidth - 16; // 留出一些边距
+        }
+        
+        // 检查下边界，如果超出则显示在上方
+        const pickerHeight = 200; // 估算高度
+        if (top + pickerHeight > window.innerHeight) {
+          top = rect.top - pickerHeight - 8;
+        }
+        
+        picker.style.top = top + 'px';
+        picker.style.left = left + 'px';
+        
+        picker.classList.remove('hidden');
+      } else {
+        picker.classList.add('hidden');
+      }
+    }
+
+    // 应用日期范围
+    function applyDateRange() {
+      const start = document.getElementById('filterCreateTimeStart').value;
+      const end = document.getElementById('filterCreateTimeEnd').value;
+      const input = document.getElementById('filterCreateTime');
+      
+      createTimeStart = start;
+      createTimeEnd = end;
+      
+      if (start && end) {
+        // 格式化日期显示（将 2024-01-15 转换为 2024/01/15）
+        const startFormatted = start.replace(/-/g, '/');
+        const endFormatted = end.replace(/-/g, '/');
+        input.value = `${startFormatted} 至 ${endFormatted}`;
+      } else if (start) {
+        input.value = start.replace(/-/g, '/') + ' 起';
+      } else if (end) {
+        input.value = '至 ' + end.replace(/-/g, '/');
+      } else {
+        input.value = '';
+      }
+      
+      document.getElementById('dateRangePicker').classList.add('hidden');
+      applyFilters();
+    }
+
+    // 清空日期范围
+    function clearDateRange() {
+      document.getElementById('filterCreateTimeStart').value = '';
+      document.getElementById('filterCreateTimeEnd').value = '';
+      document.getElementById('filterCreateTime').value = '';
+      createTimeStart = '';
+      createTimeEnd = '';
+      document.getElementById('dateRangePicker').classList.add('hidden');
+      applyFilters();
+    }
+
+    // 应用筛选
+    function applyFilters() {
+      const name = document.getElementById('filterName').value.trim();
+      const contact = document.getElementById('filterContact').value.trim();
+      const linkedSchool = document.getElementById('filterLinkedSchool').value;
+      const workSchool = document.getElementById('filterWorkSchool').value;
+      const status = document.getElementById('filterStatus').value;
+
+      filteredTeachers = teachers.filter(teacher => {
+        if (name && !teacher.name?.includes(name)) return false;
+        if (contact && !teacher.phone?.includes(contact) && !teacher.email?.includes(contact)) return false;
+        if (linkedSchool && teacher.linkedSchool !== schoolMap[linkedSchool]) return false;
+        if (workSchool && teacher.workSchool !== schoolMap[workSchool]) return false;
+        
+        // 日期范围筛选
+        if (createTimeStart || createTimeEnd) {
+          if (!teacher.createTime) return false;
+          // 提取日期部分（格式：2024-01-15 10:30:00 -> 2024-01-15）
+          const teacherDate = teacher.createTime.split(' ')[0];
+          
+          if (createTimeStart && teacherDate < createTimeStart) return false;
+          if (createTimeEnd && teacherDate > createTimeEnd) return false;
+        }
+        
+        if (status !== '' && teacher.status !== parseInt(status)) return false;
+        return true;
+      });
+
+      currentPage = 1;
+      renderTable();
+      updatePagination();
+    }
+
+    // 重置筛选
+    function resetFilters() {
+      document.getElementById('filterName').value = '';
+      document.getElementById('filterContact').value = '';
+      document.getElementById('filterLinkedSchool').value = '';
+      document.getElementById('filterWorkSchool').value = '';
+      document.getElementById('filterCreateTime').value = '';
+      document.getElementById('filterCreateTimeStart').value = '';
+      document.getElementById('filterCreateTimeEnd').value = '';
+      document.getElementById('filterStatus').value = '';
+      
+      createTimeStart = '';
+      createTimeEnd = '';
+      document.getElementById('dateRangePicker').classList.add('hidden');
+      
+      filteredTeachers = [...teachers];
+      currentPage = 1;
+      renderTable();
+      updatePagination();
+    }
+
+    // 切换状态
+    function toggleStatus(id) {
+      const teacher = teachers.find(t => t.id === id);
+      if (teacher) {
+        teacher.status = teacher.status === 1 ? 0 : 1;
+        applyFilters();
+      }
+    }
+
+    // 打开添加模态框
+    function openAddModal() {
+      const modal = document.getElementById('addModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        if (content) {
+          content.classList.remove('scale-95');
+          content.classList.add('scale-100');
+        }
+      }, 10);
+      document.getElementById('addForm').reset();
+    }
+
+    // 关闭添加模态框
+    function closeAddModal() {
+      const modal = document.getElementById('addModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      if (content) {
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+
+    // 打开编辑模态框
+    function openEditModal(id) {
+      const teacher = teachers.find(t => t.id === id);
+      if (teacher) {
+        document.getElementById('editId').value = teacher.id;
+        document.getElementById('editEmail').value = teacher.email || '';
+        document.getElementById('editName').value = teacher.name || '';
+        document.getElementById('editLinkedSchool').value = Object.keys(schoolMap).find(k => schoolMap[k] === teacher.linkedSchool) || '';
+        document.getElementById('editWorkSchool').value = Object.keys(schoolMap).find(k => schoolMap[k] === teacher.workSchool) || '';
+        document.getElementById('editMajor').value = teacher.major || '';
+        document.getElementById('editPosition').value = teacher.position || '';
+        document.getElementById('editBio').value = teacher.bio || '';
+        
+        const modal = document.getElementById('editModal');
+        const content = modal.querySelector('[class*="scale-"]');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          if (content) {
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+          }
+        }, 10);
+      }
+    }
+
+    // 关闭编辑模态框
+    function closeEditModal() {
+      const modal = document.getElementById('editModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      if (content) {
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+
+    // 打开重置密码模态框
+    function openResetPasswordModal(id) {
+      document.getElementById('resetPasswordId').value = id;
+      const modal = document.getElementById('resetPasswordModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        if (content) {
+          content.classList.remove('scale-95');
+          content.classList.add('scale-100');
+        }
+      }, 10);
+      document.getElementById('resetPasswordForm').reset();
+    }
+
+    // 关闭重置密码模态框
+    function closeResetPasswordModal() {
+      const modal = document.getElementById('resetPasswordModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      if (content) {
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+
+    // 打开修改院校模态框
+    function openChangeSchoolModal(id) {
+      const teacher = teachers.find(t => t.id === id);
+      if (teacher) {
+        document.getElementById('changeSchoolId').value = id;
+        document.getElementById('changeSchoolSelect').value = Object.keys(schoolMap).find(k => schoolMap[k] === teacher.linkedSchool) || '';
+        const modal = document.getElementById('changeSchoolModal');
+        const content = modal.querySelector('[class*="scale-"]');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          if (content) {
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+          }
+        }, 10);
+      }
+    }
+
+    // 关闭修改院校模态框
+    function closeChangeSchoolModal() {
+      const modal = document.getElementById('changeSchoolModal');
+      const content = modal.querySelector('[class*="scale-"]');
+      if (content) {
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+
+    // 表单提交处理
+    document.getElementById('addForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const newTeacher = {
+        id: teachers.length + 1,
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: '',
+        workSchool: schoolMap[formData.get('workSchool')] || '',
+        linkedSchool: schoolMap[formData.get('linkedSchool')],
+        createTime: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\//g, '-'),
+        lastLogin: '',
+        status: 1,
+        major: formData.get('major') || '',
+        position: formData.get('position') || '',
+        bio: formData.get('bio') || ''
+      };
+      teachers.push(newTeacher);
+      resetFilters();
+      closeAddModal();
+      alert('添加成功！');
+    });
+
+    document.getElementById('editForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const id = parseInt(formData.get('id'));
+      const teacher = teachers.find(t => t.id === id);
+      if (teacher) {
+        teacher.name = formData.get('name');
+        teacher.workSchool = schoolMap[formData.get('workSchool')] || '';
+        teacher.major = formData.get('major') || '';
+        teacher.position = formData.get('position') || '';
+        teacher.bio = formData.get('bio') || '';
+        applyFilters();
+        closeEditModal();
+        alert('编辑成功！');
+      }
+    });
+
+    document.getElementById('resetPasswordForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const newPassword = formData.get('newPassword');
+      const confirmPassword = formData.get('confirmPassword');
+      
+      if (newPassword !== confirmPassword) {
+        alert('两次输入的密码不一致！');
+        return;
+      }
+      
+      const id = parseInt(formData.get('id'));
+      // 这里应该调用API重置密码
+      closeResetPasswordModal();
+      alert('密码重置成功！');
+    });
+
+    document.getElementById('changeSchoolForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const id = parseInt(formData.get('id'));
+      const teacher = teachers.find(t => t.id === id);
+      if (teacher) {
+        teacher.linkedSchool = schoolMap[formData.get('linkedSchool')];
+        applyFilters();
+        closeChangeSchoolModal();
+        alert('院校修改成功！');
+      }
+    });
+
+    // 初始化
+    init();
+  </script>
+</body>
+</html>
