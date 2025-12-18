@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>怎么描述需求</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+  </style>
+</head>
+<body class="relative h-screen flex flex-col overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-6 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-2xl font-bold text-slate-900 text-center mb-4 flex-shrink-0">怎么描述需求？</h2>
+
+  <!-- 左右分屏 -->
+  <div class="relative flex-1 flex gap-6 min-h-0 overflow-hidden">
+    <!-- 左侧：对话过程 -->
+    <div class="flex-1 flex flex-col bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+        <i class="fa-solid fa-comments text-indigo-500"></i>
+        <span class="font-medium text-gray-700 text-sm">与 AI 的对话</span>
+      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-3 text-sm">
+        <!-- 用户消息1 -->
+        <div class="flex justify-end">
+          <div class="bg-indigo-500 text-white rounded-xl rounded-br-sm px-3 py-2 max-w-[90%]">
+            制作一个AI图片社区的广场界面。顶部导航栏：灵感画廊/我的作品/开始创作，右侧显示用户头像和用户名。做"灵感画廊"内容页，很多图的排列，显示创作人头像、用户名、点赞数，界面要自适应，要有动效，风格简洁有调性。有不清楚的地方请先向我提问。使用 Tailwind CSS + Font Awesome。
+          </div>
+        </div>
+        <!-- AI消息1 -->
+        <div class="flex justify-start">
+          <div class="bg-gray-100 text-gray-700 rounded-xl rounded-bl-sm px-3 py-2 max-w-[90%]">
+            <div class="mb-1">在写提示词之前，我有几个问题想确认：</div>
+            <div class="space-y-0.5 text-gray-600">
+              <div>1. 产品名称：叫"创意空间"可以吗？还是你有其他想法？</div>
+              <div>2. 图片内容：灵感画廊里的图片是什么类型的？</div>
+              <div>3. 图片来源：演示时图片用什么？</div>
+              <div>4. 数据量：灵感画廊展示多少张图片合适？</div>
+              <div>5. 点赞交互：点赞只是视觉效果，还是需要记住状态？</div>
+              <div>6. 其他两个页面：需要做出来吗？还是只做导航占位？</div>
+            </div>
+          </div>
+        </div>
+        <!-- 用户消息2 -->
+        <div class="flex justify-end">
+          <div class="bg-indigo-500 text-white rounded-xl rounded-br-sm px-3 py-2 max-w-[90%]">
+            <div class="space-y-0.5">
+              <div>1. 你取一个适合的英文名，作为logo，显示在导航栏左侧</div>
+              <div>2. 不需要分类</div>
+              <div>3. 使用 Unsplash 上的图片</div>
+              <div>4. 初始数量能够铺满屏幕，滚动加载。图片宽度要等比例缩放到一致</div>
+              <div>5. 作者头像/用户名显示在图片左下方，点赞组件显示在右下方。点赞是空心爱心，点击变红心。这些元素默认不显示，鼠标移入才显示</div>
+              <div>6. 那两个不做，只是导航占位，点击无效</div>
+            </div>
+          </div>
+        </div>
+        <!-- AI消息2 -->
+        <div class="flex justify-start">
+          <div class="bg-gray-100 text-gray-700 rounded-xl rounded-bl-sm px-3 py-2 max-w-[90%]">
+            好的，我已经整理好完整的提示词 →
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中间箭头 -->
+    <div class="flex items-center flex-shrink-0">
+      <i class="fa-solid fa-arrow-right text-xl text-indigo-300"></i>
+    </div>
+
+    <!-- 右侧：生成的提示词 -->
+    <div class="flex-1 flex flex-col bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+        <i class="fa-solid fa-file-code text-green-500"></i>
+        <span class="font-medium text-gray-700 text-sm">生成的提示词</span>
+      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin p-4 text-sm text-gray-700 leading-relaxed">
+        <div class="text-indigo-600 font-bold text-base mb-2">## 页面概述</div>
+        <div class="mb-4">做一个 AI 图片分享社区的「灵感画廊」页面，采用现代图片社区网站的设计风格，极简、大留白、让图片成为主角。</div>
+        
+        <div class="text-indigo-600 font-bold text-base mb-2">## 页面结构</div>
+        
+        <div class="text-gray-500 font-medium mb-1">### 顶部导航栏</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>左侧：Logo，使用「Muse」这个英文单词，用艺术感的字体</li>
+          <li>中间：三个导航标签「灵感画廊 / 我的作品 / 开始创作」，灵感画廊为当前选中状态</li>
+          <li>右侧：用户头像（圆形）+ 用户名</li>
+        </ul>
+        
+        <div class="text-gray-500 font-medium mb-1">### 内容区域</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>瀑布流布局展示图片</li>
+          <li>图片宽度一致，高度不等（保持原图比例）</li>
+          <li>响应式：桌面 4 列，平板 3 列，手机 2 列</li>
+        </ul>
+        
+        <div class="text-gray-500 font-medium mb-1">### 图片卡片</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>图片使用 Unsplash 随机图片</li>
+          <li>鼠标悬停时显示：</li>
+          <li class="ml-4">- 左下角：作者头像（小圆形）+ 用户名</li>
+          <li class="ml-4">- 右下角：空心爱心图标 + 点赞数</li>
+          <li class="ml-4">- 图片上方加一层渐变遮罩，让文字更清晰</li>
+          <li>点击爱心可点赞，爱心变成红色实心，数字 +1</li>
+        </ul>
+        
+        <div class="text-gray-500 font-medium mb-1">### 滚动加载</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>初始加载 20 张图片</li>
+          <li>滚动到底部自动加载更多，每次加载 12 张</li>
+          <li>总共 44 张图片，加载完毕后显示「已经到底啦~」</li>
+        </ul>
+        
+        <div class="text-indigo-600 font-bold text-base mb-2">## 风格要求</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>整体风格：极简、干净、大留白、让图片成为主角</li>
+          <li>配色：黑白灰为主，彩色只来自图片本身</li>
+          <li>导航栏：白色背景，细字体，无边框</li>
+          <li>卡片：无边框，悬停时轻微放大 + 阴影加深</li>
+        </ul>
+        
+        <div class="text-indigo-600 font-bold text-base mb-2">## 交互动效</div>
+        <ul class="list-disc list-inside mb-3 space-y-0.5 text-gray-600">
+          <li>页面加载时图片依次淡入</li>
+          <li>图片悬停：阴影变深 + 信息浮现</li>
+          <li>点赞：爱心有心跳动画</li>
+          <li>滚动加载时显示 loading 动画</li>
+        </ul>
+        
+        <div class="text-indigo-600 font-bold text-base mb-2">## 技术方案</div>
+        <ul class="list-disc list-inside space-y-0.5 text-gray-600">
+          <li>单 HTML 文件实现</li>
+          <li>用 Tailwind CSS + Font Awesome</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部说明 -->
+  <p class="relative text-center text-gray-500 text-lg mt-5 flex-shrink-0">不需要一次写完整提示词，先说大概，让 AI 问你问题，最终提示词是"聊"出来的</p>
+</body>
+</html>

@@ -101,6 +101,16 @@ const config = {
       src: "pages/15-chapter-prototype.html",
       title: "AI 画原型",
       assets: []
+    },
+    {
+      src: "pages/16-requirement-desc.html",
+      title: "怎么描述需求",
+      assets: []
+    },
+    {
+      src: "pages/17-ai-generate.html",
+      title: "现场演示",
+      assets: []
     }
   ]
 };
