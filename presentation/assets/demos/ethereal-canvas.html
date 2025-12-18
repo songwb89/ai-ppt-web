@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muse - 灵感画廊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .logo { font-family: 'Dancing Script', cursive; }
+        .nav-menu { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .masonry {
+            column-count: 4;
+            column-gap: 16px;
+        }
+        @media (max-width: 1024px) {
+            .masonry { column-count: 3; }
+        }
+        @media (max-width: 768px) {
+            .masonry { column-count: 2; }
+        }
+        
+        .card {
+            break-inside: avoid;
+            margin-bottom: 16px;
+        }
+        
+        .card img {
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover img {
+            transform: scale(1.02);
+        }
+        
+        .card:hover .card-overlay {
+            opacity: 1;
+        }
+        
+        .card-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .heartbeat {
+            animation: heartbeat 0.4s ease;
+        }
+        
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #333;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .tags-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .tags-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tag-btn {
+            transition: all 0.2s ease;
+        }
+        .tag-btn.active {
+            background-color: #111;
+            color: #fff;
+        }
+        
+        /* 预览弹窗 */
+        .preview-modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .preview-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .preview-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .preview-modal.active .preview-content {
+            transform: scale(1);
+        }
+        
+        /* 移动端菜单 */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        .menu-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50">
+        <div class="mx-auto px-3 sm:px-6 lg:px-12 h-16 flex items-center justify-between">
+            <!-- 汉堡菜单按钮（手机端） -->
+            <button id="menu-btn" class="md:hidden w-8 h-8 flex items-center justify-center text-gray-600">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            
+            <!-- Logo（手机端居中，桌面端左侧） -->
+            <div class="logo text-3xl text-gray-900 md:order-first absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">Muse</div>
+            
+            <!-- 导航标签（桌面端显示） -->
+            <div class="nav-menu hidden md:flex items-center space-x-8 text-lg">
+                <a href="#" class="text-gray-900 font-semibold">灵感画廊</a>
+                <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">我的作品</a>
+                <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors">开始创作</a>
+            </div>
+            
+            <!-- 用户信息 -->
+            <div class="flex items-center space-x-3">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=creator" alt="用户头像" class="w-8 h-8 rounded-full object-cover bg-gray-100">
+                <span class="text-sm text-gray-600 hidden sm:inline">Arlen</span>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 移动端侧边菜单 -->
+    <div id="menu-overlay" class="menu-overlay fixed inset-0 bg-black/50 z-50 md:hidden"></div>
+    <div id="mobile-menu" class="mobile-menu fixed top-0 left-0 w-64 h-full bg-white z-50 md:hidden shadow-xl">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <div class="logo text-2xl text-gray-900">Muse</div>
+                <button id="close-menu" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="nav-menu flex flex-col space-y-4 text-lg">
+                <a href="#" class="text-gray-900 font-semibold py-2">灵感画廊</a>
+                <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors py-2">我的作品</a>
+                <a href="#" class="text-gray-400 hover:text-gray-600 transition-colors py-2">开始创作</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div class="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm z-40 border-b border-gray-100">
+        <div class="mx-auto px-3 sm:px-6 lg:px-12 h-14 flex items-center justify-between gap-4">
+            <!-- 分类标签 -->
+            <div class="tags-scroll flex items-center gap-2 overflow-x-auto flex-1 min-w-0">
+                <button class="tag-btn active px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">全部</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">人物</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">风景</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">建筑</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">美食</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">动物</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">抽象</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">科技</button>
+                <button class="tag-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">复古</button>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="relative flex-shrink-0">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" placeholder="搜索灵感" class="w-36 sm:w-48 pl-9 pr-4 py-1.5 rounded-full bg-gray-100 text-sm outline-none focus:ring-2 focus:ring-gray-200 transition-all">
+            </div>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <main class="mx-auto px-3 sm:px-6 lg:px-12 pt-36 pb-12">
+        <div id="gallery" class="masonry"></div>
+        
+        <!-- 加载状态 -->
+        <div id="loading" class="flex justify-center py-8 hidden">
+            <div class="loader"></div>
+        </div>
+        
+        <!-- 到底提示 -->
+        <div id="end-message" class="text-center py-8 text-gray-400 text-sm hidden">
+            已经到底啦~
+        </div>
+    </main>
+
+    <!-- 图片预览弹窗 -->
+    <div id="preview-modal" class="preview-modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+        <div class="preview-content bg-white rounded-2xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col md:flex-row">
+            <!-- 图片区域 -->
+            <div class="md:flex-1 bg-gray-100 flex items-center justify-center min-h-[200px] md:min-h-0 relative">
+                <div id="preview-loader" class="absolute inset-0 flex items-center justify-center">
+                    <div class="loader"></div>
+                </div>
+                <img id="preview-image" src="" alt="预览图片" class="max-w-full max-h-[50vh] md:max-h-[80vh] object-contain opacity-0 transition-opacity duration-300">
+            </div>
+            <!-- 信息区域 -->
+            <div class="w-full md:w-80 p-6 flex flex-col">
+                <!-- 作者信息 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <img id="preview-avatar" src="" alt="作者头像" class="w-10 h-10 rounded-full bg-gray-100">
+                        <span id="preview-username" class="font-medium text-gray-900"></span>
+                    </div>
+                    <button id="preview-like-btn" class="flex items-center space-x-1 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors" data-liked="false" data-likes="0">
+                        <i class="fa-heart fa-regular text-sm"></i>
+                        <span id="preview-like-count" class="text-sm"></span>
+                    </button>
+                </div>
+                <!-- 提示词 -->
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-gray-500 mb-2">提示词</h3>
+                    <p id="preview-prompt" class="text-gray-700 text-sm leading-relaxed"></p>
+                </div>
+                <!-- 关闭按钮 -->
+                <button id="close-preview" class="mt-6 w-full py-2.5 rounded-full bg-gray-900 text-white text-sm hover:bg-gray-800 transition-colors">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const loading = document.getElementById('loading');
+        const endMessage = document.getElementById('end-message');
+        
+        let loadedCount = 0;
+        const initialLoad = 20;
+        const loadMore = 12;
+        const totalImages = 44;
+        let isLoading = false;
+        
+        // 随机用户名
+        const usernames = ['艺术家小明', '设计师阿花', '摄影爱好者', '创意工坊', '灵感收集者', 
+                          '视觉探索', '色彩大师', '光影猎人', '梦想绘者', '像素诗人'];
+        
+        // 随机图片高度比例
+        const heights = [300, 350, 400, 450, 500, 280, 320, 380, 420, 360];
+        
+        // 模拟提示词
+        const prompts = [
+            'A serene mountain lake at sunset, soft golden light reflecting on calm water, surrounded by pine trees, cinematic lighting, 8k resolution',
+            'Futuristic cyberpunk cityscape at night, neon lights, flying cars, rain-soaked streets, blade runner style, ultra detailed',
+            'Elegant woman in flowing silk dress, standing in a field of lavender, golden hour, soft bokeh background, fashion photography',
+            'Abstract geometric patterns, vibrant colors, fluid shapes, digital art, minimalist composition, modern aesthetic',
+            'Cozy coffee shop interior, warm lighting, vintage furniture, plants by the window, hygge atmosphere, architectural photography',
+            'Majestic lion portrait, dramatic lighting, detailed fur texture, wildlife photography, national geographic style',
+            'Japanese zen garden in autumn, maple leaves falling, stone pathway, peaceful atmosphere, traditional architecture',
+            'Delicious gourmet burger with melting cheese, fresh vegetables, rustic wooden table, food photography, appetizing',
+            'Retro 80s synthwave landscape, purple and pink gradient sky, palm trees silhouette, nostalgic vaporwave aesthetic',
+            'Modern minimalist architecture, clean lines, white concrete, geometric shadows, architectural digest style'
+        ];
+        
+        // 预生成所有图片数据
+        const imageData = [];
+        for (let i = 0; i < totalImages; i++) {
+            imageData.push({
+                height: heights[i % heights.length],
+                username: usernames[i % usernames.length],
+                likes: Math.floor(Math.random() * 500) + 10,
+                seed: `img${i}`,
+                prompt: prompts[i % prompts.length]
+            });
+        }
+        
+        function createCard(index) {
+            const data = imageData[index];
+            const aspectRatio = 400 / data.height;
+            
+            const card = document.createElement('div');
+            card.className = 'card relative rounded-lg overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-shadow duration-300 fade-in';
+            card.style.animationDelay = `${(index % 12) * 0.05}s`;
+            
+            card.innerHTML = `
+                <div class="relative w-full" style="aspect-ratio: ${aspectRatio};">
+                    <img src="https://picsum.photos/seed/${data.seed}/400/${data.height}" 
+                         alt="灵感图片" 
+                         class="absolute inset-0 w-full h-full object-cover"
+                         loading="lazy">
+                </div>
+                <div class="card-overlay absolute inset-0 flex items-end p-4">
+                    <div class="flex items-center justify-between w-full">
+                        <div class="flex items-center space-x-2">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${data.username}" 
+                                 alt="作者头像" 
+                                 class="w-6 h-6 rounded-full border border-white/50 bg-white/20">
+                            <span class="text-white text-xs">${data.username}</span>
+                        </div>
+                        <button class="like-btn flex items-center space-x-1 text-white" data-liked="false" data-likes="${data.likes}">
+                            <i class="fa-heart fa-regular text-sm"></i>
+                            <span class="text-xs like-count">${data.likes}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // 点赞功能
+            const likeBtn = card.querySelector('.like-btn');
+            likeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const icon = likeBtn.querySelector('i');
+                const countEl = likeBtn.querySelector('.like-count');
+                const isLiked = likeBtn.dataset.liked === 'true';
+                let currentLikes = parseInt(likeBtn.dataset.likes);
+                
+                if (isLiked) {
+                    icon.className = 'fa-heart fa-regular text-sm';
+                    currentLikes--;
+                } else {
+                    icon.className = 'fa-heart fa-solid text-sm text-red-500 heartbeat';
+                    currentLikes++;
+                }
+                
+                likeBtn.dataset.liked = (!isLiked).toString();
+                likeBtn.dataset.likes = currentLikes;
+                countEl.textContent = currentLikes;
+            });
+            
+            // 点击卡片打开预览
+            card.addEventListener('click', () => openPreview(index));
+            
+            return card;
+        }
+        
+        // 预览功能
+        const previewModal = document.getElementById('preview-modal');
+        const previewImage = document.getElementById('preview-image');
+        const previewAvatar = document.getElementById('preview-avatar');
+        const previewUsername = document.getElementById('preview-username');
+        const previewLikeBtn = document.getElementById('preview-like-btn');
+        const previewLikeCount = document.getElementById('preview-like-count');
+        const previewPrompt = document.getElementById('preview-prompt');
+        const closePreview = document.getElementById('close-preview');
+        
+        const previewLoader = document.getElementById('preview-loader');
+        
+        function openPreview(index) {
+            const data = imageData[index];
+            
+            // 显示加载状态，隐藏图片
+            previewLoader.classList.remove('hidden');
+            previewImage.classList.remove('opacity-100');
+            previewImage.classList.add('opacity-0');
+            
+            // 预加载图片
+            const imgUrl = `https://picsum.photos/seed/${data.seed}/800/${data.height * 2}`;
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                previewImage.src = imgUrl;
+                previewLoader.classList.add('hidden');
+                previewImage.classList.remove('opacity-0');
+                previewImage.classList.add('opacity-100');
+            };
+            tempImg.src = imgUrl;
+            
+            previewAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.username}`;
+            previewUsername.textContent = data.username;
+            previewLikeCount.textContent = data.likes;
+            previewLikeBtn.dataset.likes = data.likes;
+            previewLikeBtn.dataset.liked = 'false';
+            previewLikeBtn.querySelector('i').className = 'fa-heart fa-regular text-sm';
+            previewPrompt.textContent = data.prompt;
+            previewModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePreviewModal() {
+            previewModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        closePreview.addEventListener('click', closePreviewModal);
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) closePreviewModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreviewModal();
+        });
+        
+        // 预览弹窗点赞
+        previewLikeBtn.addEventListener('click', () => {
+            const icon = previewLikeBtn.querySelector('i');
+            const isLiked = previewLikeBtn.dataset.liked === 'true';
+            let currentLikes = parseInt(previewLikeBtn.dataset.likes);
+            
+            if (isLiked) {
+                icon.className = 'fa-heart fa-regular text-sm';
+                currentLikes--;
+            } else {
+                icon.className = 'fa-heart fa-solid text-sm text-red-500 heartbeat';
+                currentLikes++;
+            }
+            
+            previewLikeBtn.dataset.liked = (!isLiked).toString();
+            previewLikeBtn.dataset.likes = currentLikes;
+            previewLikeCount.textContent = currentLikes;
+        });
+        
+        function loadImages(count) {
+            if (isLoading || loadedCount >= totalImages) return;
+            
+            isLoading = true;
+            loading.classList.remove('hidden');
+            
+            const toLoad = Math.min(count, totalImages - loadedCount);
+            
+            setTimeout(() => {
+                for (let i = 0; i < toLoad; i++) {
+                    const card = createCard(loadedCount + i);
+                    gallery.appendChild(card);
+                }
+                
+                loadedCount += toLoad;
+                isLoading = false;
+                loading.classList.add('hidden');
+                
+                if (loadedCount >= totalImages) {
+                    endMessage.classList.remove('hidden');
+                }
+            }, 500);
+        }
+        
+        // 标签切换
+        document.querySelectorAll('.tag-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        // 移动端菜单
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu');
+        
+        function openMenu() {
+            mobileMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMenu() {
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        menuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+        
+        // 初始加载
+        loadImages(initialLoad);
+        
+        // 滚动加载
+        window.addEventListener('scroll', () => {
+            if (isLoading || loadedCount >= totalImages) return;
+            
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+            
+            if (scrollTop + windowHeight >= docHeight - 200) {
+                loadImages(loadMore);
+            }
+        });
+    </script>
+</body>
+</html>

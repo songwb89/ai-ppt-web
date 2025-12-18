@@ -97,19 +97,24 @@ function updateAssets(assets) {
       icon = 'fa-window-maximize';
       bgColor = 'bg-green-50';
       iconColor = 'text-green-500';
+    } else if (asset.type === 'link') {
+      icon = 'fa-arrow-up-right-from-square';
+      bgColor = 'bg-blue-50';
+      iconColor = 'text-blue-500';
     } else {
       icon = 'fa-image';
       bgColor = 'bg-indigo-50';
       iconColor = 'text-indigo-500';
     }
     
+    const label = asset.label || asset.title || (asset.type === 'video' ? '视频' : asset.type === 'page' ? '页面' : asset.type === 'link' ? '外部链接' : '图片');
     return `
       <div class="asset-item flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors" 
            data-index="${idx}" data-type="${asset.type}" data-src="${asset.src}">
         <div class="w-9 h-9 ${bgColor} rounded-lg flex items-center justify-center ${iconColor} text-lg">
           <i class="fa-solid ${icon}"></i>
         </div>
-        <span class="text-sm text-gray-600">${asset.label || (asset.type === 'video' ? '视频' : asset.type === 'page' ? '页面' : '图片')}</span>
+        <span class="text-sm text-gray-600">${label}</span>
       </div>
     `;
   }).join('');
@@ -150,7 +155,7 @@ function goNext() {
   }
 }
 
-// 打开 Lightbox（图片/视频）
+// 打开 Lightbox（图片/视频/页面/链接）
 function openLightbox(type, src) {
   if (type === 'image') {
     lightboxContent.innerHTML = `<img src="${src}" alt="" class="max-w-[90vw] max-h-[90vh] object-contain">`;
@@ -158,7 +163,7 @@ function openLightbox(type, src) {
   } else if (type === 'video') {
     lightboxContent.innerHTML = `<video src="${src}" controls autoplay class="max-w-[90vw] max-h-[90vh]"></video>`;
     lightbox.classList.add('active');
-  } else if (type === 'page') {
+  } else if (type === 'page' || type === 'link') {
     openPageModal(src);
   }
 }

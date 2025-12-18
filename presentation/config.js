@@ -75,6 +75,32 @@ const config = {
       src: "pages/11-flowchart.html",
       title: "流程图对比",
       assets: []
+    },
+    {
+      src: "pages/12-modify-cost.html",
+      title: "修改成本对比",
+      assets: []
+    },
+    {
+      src: "pages/13-doc-quality.html",
+      title: "文档质量对比",
+      assets: [
+        {
+          type: "link",
+          src: "https://v3-0--whoot-student-mgmt.netlify.app/pages/student-management.html",
+          title: "学生管理页面演示"
+        }
+      ]
+    },
+    {
+      src: "pages/14-core-shift.html",
+      title: "核心转变",
+      assets: []
+    },
+    {
+      src: "pages/15-chapter-prototype.html",
+      title: "AI 画原型",
+      assets: []
     }
   ]
 };

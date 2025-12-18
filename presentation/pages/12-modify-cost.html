@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>修改成本对比</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-8 px-4">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 轻噪点 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/></filter><rect width=%22200%22 height=%22200%22 filter=%22url(%23n)%22 opacity=%220.3%22/></svg>');"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-4xl md:text-5xl font-bold mb-3 text-slate-900">修改成本</h2>
+
+  <!-- 需求背景 -->
+  <p class="relative text-gray-400 text-sm mb-8 max-w-2xl text-center">场景：评审后决定"行内提示"暂时统一采用 Toast 形式，需要在每个"操作反馈"部分添加备注说明</p>
+
+  <!-- 左右分屏对比 -->
+  <div class="relative w-full flex gap-12 items-stretch justify-center px-8">
+    <!-- 左侧：手动改 -->
+    <div class="flex-1 flex flex-col max-w-xl">
+      <div class="mb-4 text-center">
+        <span class="inline-block px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold text-xl">手动改</span>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-8 flex-1 min-h-[420px]">
+        <div class="space-y-5">
+          <!-- 步骤1 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-gray-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-magnifying-glass text-gray-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-gray-800 font-medium text-lg">Ctrl+F 搜索"操作反馈"</div>
+              <div class="text-gray-400 text-sm mt-1">打开文档，开始查找</div>
+            </div>
+          </div>
+          <!-- 步骤2 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-gray-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-pen text-gray-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-gray-800 font-medium text-lg">找到第1处，手动添加备注</div>
+              <div class="text-gray-400 text-sm mt-1">定位、编辑、保存</div>
+            </div>
+          </div>
+          <!-- 步骤3 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-amber-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-repeat text-amber-600 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-amber-700 font-medium text-lg">继续搜索，找到第2处...</div>
+              <div class="text-gray-400 text-sm mt-1">重复上述操作</div>
+            </div>
+          </div>
+          <!-- 步骤4 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-red-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-arrows-rotate text-red-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-red-600 font-medium text-lg">重复 N 次，担心遗漏</div>
+              <div class="text-gray-400 text-sm mt-1">8处修改 = 8次重复操作</div>
+            </div>
+          </div>
+          <!-- 步骤5 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-gray-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-clipboard-check text-gray-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-gray-800 font-medium text-lg">全文检查一遍确认</div>
+              <div class="text-gray-400 text-sm mt-1">生怕漏改、改错</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-4 text-center text-gray-500 text-lg">改一处牵连多处，容易漏</p>
+    </div>
+
+    <!-- 右侧：AI 批量改 -->
+    <div class="flex-1 flex flex-col max-w-xl">
+      <div class="mb-4 text-center">
+        <span class="inline-block px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-semibold text-xl">AI 批量改</span>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg border-2 border-indigo-300 p-8 flex-1 min-h-[420px] flex flex-col">
+        <div class="space-y-5 flex-1">
+          <!-- 步骤1 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-indigo-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-keyboard text-indigo-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-gray-800 font-medium text-lg">输入提示词</div>
+              <div class="text-indigo-600 text-sm bg-indigo-50 rounded-lg px-3 py-2 mt-2">"在所有'操作反馈'部分增加备注：表格中'行内提示'统一采用 Toast 形式展示"</div>
+            </div>
+          </div>
+          <!-- 步骤2 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-indigo-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-gray-800 font-medium text-lg">AI 自动定位并修改</div>
+              <div class="text-gray-400 text-sm mt-1">找到全部 8 处，批量添加备注</div>
+            </div>
+          </div>
+          <!-- 步骤3 -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-11 h-11 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-check text-green-500 text-lg"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-green-600 font-medium text-lg">完成 ✓</div>
+              <div class="text-gray-400 text-sm mt-1">无遗漏，一次搞定</div>
+            </div>
+          </div>
+        </div>
+        <!-- 结果统计 -->
+        <div class="mt-auto pt-6 border-t border-gray-100 text-center">
+          <span class="text-4xl font-bold text-indigo-600">1</span>
+          <span class="text-gray-500 text-lg ml-1">句话</span>
+          <span class="text-gray-400 mx-3">=</span>
+          <span class="text-4xl font-bold text-green-500">8</span>
+          <span class="text-gray-500 text-lg ml-1">处修改</span>
+        </div>
+      </div>
+      <p class="mt-4 text-center text-gray-500 text-lg">告诉 AI 改哪里，批量搞定</p>
+    </div>
+  </div>
+</body>
+</html>
