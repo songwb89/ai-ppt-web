@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>沟通技巧</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-8 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-3xl font-bold text-slate-900 mb-8">和 AI 沟通的 8 个技巧</h2>
+
+  <!-- 技巧卡片网格 -->
+  <div class="relative grid grid-cols-4 gap-5 max-w-6xl">
+    <!-- 技巧1 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 font-bold">1</div>
+        <h3 class="font-semibold text-gray-800 text-lg">先说背景，再提要求</h3>
+      </div>
+      <p class="text-gray-500">让 AI 先理解你的意图，而不是直接执行动作，正确率更高</p>
+    </div>
+
+    <!-- 技巧2 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-bold">2</div>
+        <h3 class="font-semibold text-gray-800 text-lg">让 AI 先提问</h3>
+      </div>
+      <p class="text-gray-500">不要直接让它写，先让它问你问题，确认细节后再输出</p>
+    </div>
+
+    <!-- 技巧3 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600 font-bold">3</div>
+        <h3 class="font-semibold text-gray-800 text-lg">先要方案，再要代码</h3>
+      </div>
+      <p class="text-gray-500">让 AI 提供几个方案，选定后再实现，避免结果与预期不符</p>
+    </div>
+
+    <!-- 技巧4 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-bold">4</div>
+        <h3 class="font-semibold text-gray-800 text-lg">复杂需求拆小步</h3>
+      </div>
+      <p class="text-gray-500">一步一步来，满意就保存，逐步叠加，不要一口吃成胖子</p>
+    </div>
+
+    <!-- 技巧5 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 font-bold">5</div>
+        <h3 class="font-semibold text-gray-800 text-lg">初稿不求完美</h3>
+      </div>
+      <p class="text-gray-500">先生成再优化，不要想着一步到位，迭代比完美更重要</p>
+    </div>
+
+    <!-- 技巧6 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600 font-bold">6</div>
+        <h3 class="font-semibold text-gray-800 text-lg">修改意见要具体</h3>
+      </div>
+      <p class="text-gray-500">说清楚哪里不对、想要什么效果，必要时截图给 AI 看</p>
+    </div>
+
+    <!-- 技巧7 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">7</div>
+        <h3 class="font-semibold text-gray-800 text-lg">规范提前约定</h3>
+      </div>
+      <p class="text-gray-500">技术栈、设计风格等规范，在项目开始时就告诉 AI</p>
+    </div>
+
+    <!-- 技巧8 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center text-teal-600 font-bold">8</div>
+        <h3 class="font-semibold text-gray-800 text-lg">按任务分窗口</h3>
+      </div>
+      <p class="text-gray-500">不同功能开不同对话窗口，上下文更清晰，AI 不会混乱</p>
+    </div>
+  </div>
+</body>
+</html>

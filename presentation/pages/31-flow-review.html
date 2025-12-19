@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>流程回顾</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-3xl font-bold text-slate-900 mb-12">流程回顾</h2>
+
+  <!-- 流程图 -->
+  <div class="relative flex items-center justify-center gap-6">
+    <!-- 步骤1：需求想法 -->
+    <div class="flex flex-col items-center">
+      <div class="w-24 h-24 bg-white rounded-2xl shadow-lg border border-amber-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-lightbulb text-4xl text-amber-500"></i>
+      </div>
+      <span class="text-base text-slate-700 font-medium">需求想法</span>
+    </div>
+
+    <!-- 箭头 -->
+    <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+
+    <!-- 步骤2：AI 画原型 -->
+    <div class="flex flex-col items-center">
+      <div class="w-24 h-24 bg-white rounded-2xl shadow-lg border border-indigo-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-wand-magic-sparkles text-4xl text-indigo-500"></i>
+      </div>
+      <span class="text-base text-slate-700 font-medium">AI 画原型</span>
+    </div>
+
+    <!-- 箭头 -->
+    <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+
+    <!-- 步骤3：AI 写文档 -->
+    <div class="flex flex-col items-center">
+      <div class="w-24 h-24 bg-white rounded-2xl shadow-lg border border-purple-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-file-lines text-4xl text-purple-500"></i>
+      </div>
+      <span class="text-base text-slate-700 font-medium">AI 写文档</span>
+    </div>
+
+    <!-- 箭头 -->
+    <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+
+    <!-- 步骤4：版本管理与分享 -->
+    <div class="flex flex-col items-center">
+      <div class="w-24 h-24 bg-white rounded-2xl shadow-lg border border-green-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-share-nodes text-4xl text-green-500"></i>
+      </div>
+      <span class="text-base text-slate-700 font-medium">版本管理与分享</span>
+    </div>
+  </div>
+
+  <!-- 底部说明 -->
+  <p class="relative text-center text-gray-500 mt-12">
+    从想法到可交付的原型和文档，全程 AI 辅助
+  </p>
+</body>
+</html>

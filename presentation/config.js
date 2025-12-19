@@ -179,6 +179,36 @@ const config = {
           title: "教师登录注册演示"
         }
       ]
+    },
+    {
+      src: "pages/28-chapter-tips.html",
+      title: "和 AI 沟通的技巧",
+      assets: []
+    },
+    {
+      src: "pages/29-tips.html",
+      title: "8个沟通技巧",
+      assets: []
+    },
+    {
+      src: "pages/30-tips-summary.html",
+      title: "技巧总结",
+      assets: []
+    },
+    {
+      src: "pages/31-flow-review.html",
+      title: "流程回顾",
+      assets: []
+    },
+    {
+      src: "pages/32-resources.html",
+      title: "资源分享",
+      assets: []
+    },
+    {
+      src: "pages/33-qa.html",
+      title: "Q&A",
+      assets: []
     }
   ]
 };
