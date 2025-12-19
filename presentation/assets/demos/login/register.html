@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 在线教育平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                <i class="fas fa-graduation-cap text-white text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">在线教育平台</h1>
+            <p class="text-gray-500 mt-1">创建账号，开启学习之旅</p>
+        </div>
+
+        <!-- 注册卡片 -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <form id="register-form" class="space-y-5">
+                <!-- 手机号 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">手机号 <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-phone"></i>
+                        </span>
+                        <input type="tel" id="reg-phone" placeholder="请输入手机号" maxlength="11"
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                    </div>
+                </div>
+
+                <!-- 验证码 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">验证码 <span class="text-red-500">*</span></label>
+                    <div class="flex gap-3">
+                        <div class="relative flex-1">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <input type="text" id="reg-code" placeholder="请输入验证码" maxlength="6"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        </div>
+                        <button type="button" id="reg-sms-btn" onclick="sendSmsCode()"
+                            class="px-4 py-3 bg-blue-100 text-blue-600 rounded-lg font-medium hover:bg-blue-200 transition whitespace-nowrap">
+                            获取验证码
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 昵称 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">昵称 <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" id="reg-nickname" placeholder="请输入昵称" maxlength="20"
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                    </div>
+                </div>
+
+                <!-- 密码 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">密码 <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="reg-password" placeholder="请输入密码" oninput="checkPasswordStrength(this.value)"
+                            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        <button type="button" onclick="togglePassword('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <!-- 密码强度条 -->
+                    <div id="strength-bar" class="mt-2 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                        <div id="strength-fill" class="h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <p id="strength-text" class="text-xs mt-1 text-gray-500">密码需包含大小写字母、数字，至少8位</p>
+                </div>
+
+                <!-- 确认密码 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">确认密码 <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="reg-confirm-password" placeholder="请再次输入密码"
+                            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        <button type="button" onclick="togglePassword('reg-confirm-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 服务协议 -->
+                <div class="flex items-start">
+                    <input type="checkbox" id="reg-agree" class="w-4 h-4 mt-1 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer">
+                    <label for="reg-agree" class="ml-2 text-sm text-gray-600 cursor-pointer">
+                        我已阅读并同意
+                        <a href="#" onclick="showAgreement('service')" class="text-blue-600 hover:text-blue-700">《用户服务协议》</a>
+                        和
+                        <a href="#" onclick="showAgreement('privacy')" class="text-blue-600 hover:text-blue-700">《隐私政策》</a>
+                    </label>
+                </div>
+
+                <!-- 注册按钮 -->
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center">
+                    <i class="fas fa-user-plus mr-2"></i>立即注册
+                </button>
+            </form>
+
+            <!-- 登录链接 -->
+            <div class="mt-6 text-center text-gray-600">
+                已有账号？<a href="login.html" class="text-blue-600 hover:text-blue-700 font-medium">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 协议弹窗 -->
+    <div id="agreement-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 id="agreement-title" class="text-xl font-bold text-gray-800">用户服务协议</h3>
+                <button onclick="closeAgreement()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="agreement-content" class="p-6 overflow-y-auto flex-1 text-gray-600 text-sm leading-relaxed">
+                <!-- 协议内容 -->
+            </div>
+            <div class="p-4 border-t">
+                <button onclick="closeAgreement()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                    我已阅读
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册成功弹窗 -->
+    <div id="success-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-green-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">注册成功</h3>
+            <p class="text-gray-600 mb-6">欢迎加入在线教育平台</p>
+            <a href="login.html" class="block w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                立即登录
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform -translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        // 切换密码显示
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // 发送验证码
+        function sendSmsCode() {
+            const phone = document.getElementById('reg-phone').value;
+            const btn = document.getElementById('reg-sms-btn');
+            
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                showToast('请输入正确的手机号');
+                return;
+            }
+
+            btn.disabled = true;
+            let countdown = 60;
+            btn.textContent = `${countdown}s`;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    btn.textContent = '获取验证码';
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.textContent = `${countdown}s`;
+                }
+            }, 1000);
+
+            showToast('验证码已发送');
+        }
+
+        // 密码强度检测
+        function validatePassword(password) {
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+        }
+
+        function checkPasswordStrength(password) {
+            const fill = document.getElementById('strength-fill');
+            const text = document.getElementById('strength-text');
+            
+            let strength = 0;
+            const checks = {
+                length: password.length >= 8,
+                lower: /[a-z]/.test(password),
+                upper: /[A-Z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            if (checks.length) strength++;
+            if (checks.lower) strength++;
+            if (checks.upper) strength++;
+            if (checks.number) strength++;
+            if (checks.special) strength++;
+
+            const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
+            const texts = ['非常弱', '弱', '一般', '强', '非常强'];
+            const widths = ['20%', '40%', '60%', '80%', '100%'];
+
+            if (strength > 0) {
+                fill.className = `h-full transition-all duration-300 ${colors[strength - 1]}`;
+                fill.style.width = widths[strength - 1];
+                text.textContent = `密码强度: ${texts[strength - 1]}`;
+                
+                // 显示缺少的要求
+                const missing = [];
+                if (!checks.length) missing.push('至少8位');
+                if (!checks.lower) missing.push('小写字母');
+                if (!checks.upper) missing.push('大写字母');
+                if (!checks.number) missing.push('数字');
+                
+                if (missing.length > 0) {
+                    text.textContent += ` (还需: ${missing.join('、')})`;
+                    text.className = 'text-xs mt-1 text-orange-500';
+                } else {
+                    text.className = 'text-xs mt-1 text-green-500';
+                }
+            } else {
+                fill.style.width = '0%';
+                text.textContent = '密码需包含大小写字母、数字，至少8位';
+                text.className = 'text-xs mt-1 text-gray-500';
+            }
+        }
+
+        // 显示协议弹窗
+        function showAgreement(type) {
+            const modal = document.getElementById('agreement-modal');
+            const title = document.getElementById('agreement-title');
+            const content = document.getElementById('agreement-content');
+
+            if (type === 'service') {
+                title.textContent = '用户服务协议';
+                content.innerHTML = `
+                    <h4 class="font-bold mb-2">一、服务条款的确认和接纳</h4>
+                    <p class="mb-4">欢迎使用在线教育平台。本协议是您与在线教育平台之间关于使用本平台服务所订立的协议。请您仔细阅读本协议，您使用本平台服务即表示您已阅读并同意受本协议的约束。</p>
+                    
+                    <h4 class="font-bold mb-2">二、用户注册</h4>
+                    <p class="mb-4">1. 用户在使用本平台服务前需要注册账号。注册时，用户应提供真实、准确、完整的个人资料。<br>
+                    2. 用户有义务保证密码和账号的安全。用户对利用该密码和账号所进行的一切活动负全部责任。<br>
+                    3. 用户不得将账号转让或出借给他人使用。</p>
+                    
+                    <h4 class="font-bold mb-2">三、用户行为规范</h4>
+                    <p class="mb-4">1. 用户在使用本平台服务时，必须遵守中华人民共和国相关法律法规。<br>
+                    2. 用户不得利用本平台从事违法违规活动。<br>
+                    3. 用户不得干扰本平台的正常运营。</p>
+                    
+                    <h4 class="font-bold mb-2">四、知识产权</h4>
+                    <p class="mb-4">本平台提供的所有课程内容、教学资料等均受知识产权法律保护，未经授权不得复制、传播或用于商业用途。</p>
+                    
+                    <h4 class="font-bold mb-2">五、免责声明</h4>
+                    <p class="mb-4">1. 本平台不对因网络状况、通讯线路等任何技术原因导致的服务中断承担责任。<br>
+                    2. 本平台有权在必要时修改服务条款，服务条款一旦发生变动，将会在相关页面上公布修改后的服务条款。</p>
+                `;
+            } else {
+                title.textContent = '隐私政策';
+                content.innerHTML = `
+                    <h4 class="font-bold mb-2">一、信息收集</h4>
+                    <p class="mb-4">我们收集的信息包括：<br>
+                    1. 您在注册账号时提供的手机号码、昵称等信息。<br>
+                    2. 您在使用服务过程中产生的学习记录、课程进度等信息。<br>
+                    3. 设备信息、日志信息等技术信息。</p>
+                    
+                    <h4 class="font-bold mb-2">二、信息使用</h4>
+                    <p class="mb-4">我们使用收集的信息用于：<br>
+                    1. 提供、维护和改进我们的服务。<br>
+                    2. 向您推送个性化的学习内容和课程推荐。<br>
+                    3. 进行数据分析以改善用户体验。</p>
+                    
+                    <h4 class="font-bold mb-2">三、信息保护</h4>
+                    <p class="mb-4">1. 我们采用业界标准的安全技术来保护您的个人信息。<br>
+                    2. 我们不会将您的个人信息出售给第三方。<br>
+                    3. 未经您的同意，我们不会向第三方披露您的个人信息。</p>
+                    
+                    <h4 class="font-bold mb-2">四、Cookie使用</h4>
+                    <p class="mb-4">我们使用Cookie来记住您的登录状态和偏好设置，以提供更好的用户体验。</p>
+                    
+                    <h4 class="font-bold mb-2">五、隐私政策更新</h4>
+                    <p class="mb-4">我们可能会不时更新本隐私政策。更新后的隐私政策将在本页面发布，建议您定期查看。</p>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAgreement() {
+            document.getElementById('agreement-modal').classList.add('hidden');
+        }
+
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.add('-translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // 表单提交
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const phone = document.getElementById('reg-phone').value;
+            const code = document.getElementById('reg-code').value;
+            const nickname = document.getElementById('reg-nickname').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const agree = document.getElementById('reg-agree').checked;
+
+            // 验证手机号
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                showToast('请输入正确的手机号');
+                return;
+            }
+
+            // 验证验证码
+            if (!/^\d{6}$/.test(code)) {
+                showToast('请输入6位验证码');
+                return;
+            }
+
+            // 验证昵称
+            if (!nickname || nickname.length < 2) {
+                showToast('昵称至少2个字符');
+                return;
+            }
+
+            // 验证密码强度
+            if (!validatePassword(password)) {
+                showToast('密码需包含大小写字母、数字，至少8位');
+                return;
+            }
+
+            // 验证确认密码
+            if (password !== confirmPassword) {
+                showToast('两次输入的密码不一致');
+                return;
+            }
+
+            // 验证协议
+            if (!agree) {
+                showToast('请先同意用户服务协议和隐私政策');
+                return;
+            }
+
+            // 模拟注册成功
+            document.getElementById('success-modal').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

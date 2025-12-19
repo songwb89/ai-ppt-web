@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>不满意怎么办</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* 去除视频控件的渐变阴影背景 */
+    video::-webkit-media-controls-enclosure {
+      background: transparent;
+    }
+    video::-webkit-media-controls-panel {
+      background: linear-gradient(transparent, rgba(0,0,0,0.5));
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-8 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <div class="relative text-center mb-8">
+    <h2 class="text-3xl font-bold text-slate-900 mb-2">不满意怎么办？</h2>
+    <p class="text-lg text-gray-500">具体说哪里不对，AI 帮你改</p>
+  </div>
+
+  <!-- 卡片网格 -->
+  <div class="relative grid grid-cols-3 gap-5 max-w-5xl">
+    <!-- 卡片1 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/1.安全区调整.mp4">
+      <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-arrows-left-right text-indigo-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">内容区太窄</h3>
+      <p class="text-sm text-gray-500">减少左右边距，让图片区域更大</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+
+    <!-- 卡片2 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/2.头像优化.mp4">
+      <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-bug text-red-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">头像图片裂开</h3>
+      <p class="text-sm text-gray-500">修复头像显示异常问题</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+
+    <!-- 卡片3 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/3.增加筛选栏.mp4">
+      <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-plus text-green-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">增加筛选栏</h3>
+      <p class="text-sm text-gray-500">添加分类筛选功能</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+
+    <!-- 卡片4 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/4.修改导航字体.mp4">
+      <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-font text-purple-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">导航字体太小</h3>
+      <p class="text-sm text-gray-500">加大字号，选中状态加粗</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+
+    <!-- 卡片5 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/5.实现图片预览.mp4">
+      <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-expand text-cyan-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">图片点击预览</h3>
+      <p class="text-sm text-gray-500">点击图片弹出大图预览</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+
+    <!-- 卡片6 -->
+    <div class="video-card bg-white rounded-xl shadow-lg border border-gray-100 p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-video="../assets/videos/6.移动端显示优化.mp4">
+      <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3">
+        <i class="fa-solid fa-mobile-screen text-amber-500"></i>
+      </div>
+      <h3 class="font-semibold text-gray-800 mb-1">移动端显示优化</h3>
+      <p class="text-sm text-gray-500">小屏幕改为抽屉式导航</p>
+      <div class="mt-3 flex items-center text-indigo-500 text-sm">
+        <i class="fa-solid fa-play-circle mr-1"></i>
+        <span>点击播放</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 视频弹窗 - 全屏黑色背景，视频内容区留出空间 -->
+  <div id="videoModal" class="fixed inset-0 bg-black z-50 flex items-center justify-center hidden">
+    <button id="closeModal" class="absolute top-4 right-4 text-white/80 hover:text-white text-lg z-10">
+      <i class="fa-solid fa-xmark mr-2"></i>关闭
+    </button>
+    <div class="flex items-center justify-center px-16 pt-12" style="padding-bottom: 80px;">
+      <video id="modalVideo" class="max-w-[85vw] max-h-[80vh] object-contain" controls>
+        <source src="" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <script>
+    const videoCards = document.querySelectorAll('.video-card');
+    const videoModal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const closeModal = document.getElementById('closeModal');
+
+    videoCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const videoSrc = card.dataset.video;
+        modalVideo.src = videoSrc;
+        videoModal.classList.remove('hidden');
+        modalVideo.play();
+      });
+    });
+
+    closeModal.addEventListener('click', () => {
+      videoModal.classList.add('hidden');
+      modalVideo.pause();
+      modalVideo.src = '';
+    });
+
+    videoModal.addEventListener('click', (e) => {
+      if (e.target === videoModal) {
+        videoModal.classList.add('hidden');
+        modalVideo.pause();
+        modalVideo.src = '';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+        videoModal.classList.add('hidden');
+        modalVideo.pause();
+        modalVideo.src = '';
+      }
+    });
+  </script>
+</body>
+</html>

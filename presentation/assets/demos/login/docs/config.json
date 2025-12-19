@@ -1,0 +1,10 @@
+{
+  "docs": [
+    { "name": "登录注册", "file": "教师登录注册PRD.md" }
+  ],
+  "pageMapping": {
+    "login.html": "教师登录注册PRD.md",
+    "register.html": "教师登录注册PRD.md",
+    "index.html": "*"
+  }
+}

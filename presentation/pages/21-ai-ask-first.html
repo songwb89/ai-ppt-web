@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>让 AI 先提问</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+  </style>
+</head>
+<body class="relative h-screen flex flex-col overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-6 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <div class="relative text-center mb-4 flex-shrink-0">
+    <h2 class="text-2xl font-bold text-slate-900">关键技巧：让 AI 先提问</h2>
+    <p class="text-gray-500 mt-1">不要直接让它写，先让它问你问题，输出的文档才完整</p>
+  </div>
+
+  <!-- 左右分屏 -->
+  <div class="relative flex-1 flex gap-6 min-h-0 overflow-hidden">
+    <!-- 左侧：对话过程 -->
+    <div class="flex-1 flex flex-col bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+        <i class="fa-solid fa-comments text-indigo-500"></i>
+        <span class="font-medium text-gray-700 text-sm">对话过程</span>
+      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-3 text-sm">
+        <!-- 用户消息1 -->
+        <div class="flex justify-end">
+          <div class="bg-indigo-500 text-white rounded-xl rounded-br-sm px-3 py-2 max-w-[90%]">
+            <div class="text-xs text-indigo-200 mb-1">#login.html #register.html #PRD模板.md</div>
+            <div>帮我写一个登录注册功能的需求文档。我们是一个在线教育平台，手机号注册。登录的话，除了账号密码，还要支持手机验证码登录。注册时需要用户同意服务协议，密码要有强度要求。忘记密码的流程也要有。另外，连续输错密码要有安全限制，比如锁定账号之类的。请按我提供的文档格式来写。有不清楚的地方先问我。</div>
+          </div>
+        </div>
+
+        <!-- AI消息1 - 提问 -->
+        <div class="flex justify-start">
+          <div class="bg-gray-100 text-gray-700 rounded-xl rounded-bl-sm px-3 py-2 max-w-[90%]">
+            <div class="mb-2">好的，在开始写需求文档之前，我有几个问题需要确认：</div>
+            <div class="space-y-1.5 text-gray-600">
+              <div><span class="font-medium text-gray-700">1. 账号锁定策略：</span>连续输错密码多少次触发锁定？锁定时长是多久？</div>
+              <div><span class="font-medium text-gray-700">2. 密码强度要求：</span>我看代码里是"大小写字母+数字，至少8位"，需要强制包含特殊字符吗？</div>
+              <div><span class="font-medium text-gray-700">3. 验证码有效期：</span>短信验证码的有效时长是多少？</div>
+              <div><span class="font-medium text-gray-700">4. 用户角色：</span>这个登录注册是面向学员的吗？还是也包括教师/管理员？</div>
+              <div><span class="font-medium text-gray-700">5. 第三方登录：</span>需要支持微信、QQ等第三方登录吗？</div>
+              <div><span class="font-medium text-gray-700">6. 昵称唯一性：</span>注册时的昵称需要全局唯一吗？</div>
+              <div><span class="font-medium text-gray-700">7. 手机号唯一性：</span>一个手机号只能注册一个账号，对吧？</div>
+            </div>
+            <div class="mt-2 text-gray-500">请帮我确认下这些细节，我好按模板给你输出完整的PRD。</div>
+          </div>
+        </div>
+
+        <!-- 用户消息2 - 回答 -->
+        <div class="flex justify-end">
+          <div class="bg-indigo-500 text-white rounded-xl rounded-br-sm px-3 py-2 max-w-[90%]">
+            <div class="space-y-0.5">
+              <div>1. 比如5次错误锁定30分钟</div>
+              <div>2. 不需要特殊字符</div>
+              <div>3. 5分钟</div>
+              <div>4. 只针对教师</div>
+              <div>5. 只做手机号</div>
+              <div>6. 允许重复</div>
+              <div>7. 是的</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中间箭头 -->
+    <div class="flex items-center flex-shrink-0">
+      <i class="fa-solid fa-arrow-right text-xl text-indigo-300"></i>
+    </div>
+
+    <!-- 右侧：生成的文档 -->
+    <div class="flex-1 flex flex-col bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+        <i class="fa-solid fa-file-lines text-green-500"></i>
+        <span class="font-medium text-gray-700 text-sm">生成的文档</span>
+      </div>
+      <div class="flex-1 overflow-hidden p-2">
+        <img src="../assets/images/009.png" alt="生成的PRD文档" class="w-full h-auto rounded-lg">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

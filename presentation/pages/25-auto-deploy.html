@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提交即上线</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-8 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-indigo-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-amber-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-3xl font-bold text-slate-900 mb-8">提交即上线</h2>
+
+  <!-- 流程示意图 -->
+  <div class="relative flex items-center justify-center gap-4 mb-8">
+    <!-- 代码提交 -->
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-white rounded-xl shadow-md border border-gray-100 flex items-center justify-center mb-2">
+        <i class="fa-solid fa-code-commit text-2xl text-orange-500"></i>
+      </div>
+      <span class="text-sm text-slate-600">代码提交</span>
+    </div>
+
+    <i class="fa-solid fa-arrow-right text-xl text-gray-300"></i>
+
+    <!-- GitHub -->
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-white rounded-xl shadow-md border border-gray-100 flex items-center justify-center mb-2">
+        <i class="fa-brands fa-github text-2xl text-gray-800"></i>
+      </div>
+      <span class="text-sm text-slate-600">GitHub</span>
+    </div>
+
+    <i class="fa-solid fa-arrow-right text-xl text-gray-300"></i>
+
+    <!-- Netlify -->
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-white rounded-xl shadow-md border border-cyan-100 flex items-center justify-center mb-2">
+        <svg class="w-7 h-7" viewBox="0 0 256 256" fill="none">
+          <path d="M153.094 165.94l-62.5-36.094V93.75l62.5 36.094v36.094z" fill="#05BDBA"/>
+          <path d="M90.594 93.75l62.5-36.094 62.5 36.094-62.5 36.094-62.5-36.094z" fill="#05BDBA"/>
+          <path d="M153.094 57.656l62.5 36.094v72.188l-62.5 36.094v-72.188l-62.5-36.094 62.5-36.094z" fill="#014847"/>
+          <path d="M90.594 93.75v72.188l62.5 36.094v-72.188l-62.5-36.094z" fill="#05BDBA"/>
+        </svg>
+      </div>
+      <span class="text-sm text-slate-600">自动构建</span>
+    </div>
+
+    <i class="fa-solid fa-arrow-right text-xl text-gray-300"></i>
+
+    <!-- 预览链接 -->
+    <div class="flex flex-col items-center">
+      <div class="w-16 h-16 bg-white rounded-xl shadow-md border border-green-100 flex items-center justify-center mb-2">
+        <i class="fa-solid fa-link text-2xl text-green-500"></i>
+      </div>
+      <span class="text-sm text-slate-600">预览链接</span>
+    </div>
+  </div>
+
+  <!-- Netlify 部署截图 -->
+  <div class="relative w-full max-w-4xl h-52 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+      <svg class="w-5 h-5" viewBox="0 0 256 256" fill="none">
+        <path d="M153.094 165.94l-62.5-36.094V93.75l62.5 36.094v36.094z" fill="#05BDBA"/>
+        <path d="M90.594 93.75l62.5-36.094 62.5 36.094-62.5 36.094-62.5-36.094z" fill="#05BDBA"/>
+        <path d="M153.094 57.656l62.5 36.094v72.188l-62.5 36.094v-72.188l-62.5-36.094 62.5-36.094z" fill="#014847"/>
+        <path d="M90.594 93.75v72.188l62.5 36.094v-72.188l-62.5-36.094z" fill="#05BDBA"/>
+      </svg>
+      <span class="font-medium text-gray-700 text-sm">Netlify 部署记录</span>
+    </div>
+    <div class="p-2 overflow-hidden">
+      <img src="../assets/images/011.png" alt="Netlify部署截图" class="w-full h-auto rounded-lg">
+    </div>
+  </div>
+
+  <!-- 底部说明 -->
+  <div class="relative text-center mt-6 space-y-2">
+    <p class="text-gray-600">每次提交代码，自动生成预览链接，发给技术直接看效果</p>
+    <p class="text-gray-400 text-sm">初始配置（Git + GitHub + Netlify）网上资料很多，走一遍就熟悉了</p>
+  </div>
+</body>
+</html>
