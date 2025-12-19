@@ -55,6 +55,21 @@
     .page-modal.active {
       display: flex;
     }
+    
+    /* 素材图标呼吸效果 */
+    @keyframes breathing {
+      0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+    #assetsTrigger > * {
+      animation: breathing 2s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="bg-slate-900 text-gray-100 h-screen overflow-hidden">
@@ -92,23 +107,30 @@
   </div>
   
   <!-- 底部页码导航 - 居中 -->
-  <div class="hover-show fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-2 py-2 bg-gray-700 rounded-full shadow-lg">
-    <!-- 上一页按钮 -->
-    <button id="prevBtn" title="上一页 (←)" 
-      class="w-9 h-9 rounded-full bg-gray-600 hover:bg-gray-500 text-white text-sm cursor-pointer border-none transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-    
-    <!-- 页码显示 -->
-    <div id="pageIndicator" class="px-4 py-1 text-sm text-white min-w-[60px] text-center">
-      1 / 1
+  <div id="bottomNav" class="hover-show fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+    <!-- 提示文字 -->
+    <div id="navHint" class="text-xs text-gray-400 opacity-0 transition-opacity duration-300">
+      使用键盘 ← → 键翻页
     </div>
-    
-    <!-- 下一页按钮 -->
-    <button id="nextBtn" title="下一页 (→)" 
-      class="w-9 h-9 rounded-full bg-gray-600 hover:bg-gray-500 text-white text-sm cursor-pointer border-none transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
+    <!-- 控制按钮 -->
+    <div class="flex items-center gap-2 px-2 py-2 bg-gray-700 rounded-full shadow-lg">
+      <!-- 上一页按钮 -->
+      <button id="prevBtn" title="上一页 (←)" 
+        class="w-9 h-9 rounded-full bg-gray-600 hover:bg-gray-500 text-white text-sm cursor-pointer border-none transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      
+      <!-- 页码显示 -->
+      <div id="pageIndicator" class="px-4 py-1 text-sm text-white min-w-[60px] text-center">
+        1 / 1
+      </div>
+      
+      <!-- 下一页按钮 -->
+      <button id="nextBtn" title="下一页 (→)" 
+        class="w-9 h-9 rounded-full bg-gray-600 hover:bg-gray-500 text-white text-sm cursor-pointer border-none transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
   </div>
   
   <!-- 全屏按钮 - 右下角 -->

@@ -20,6 +20,18 @@ function init() {
   loadPage(0);
   bindEvents();
   updateNavButtons();
+  
+  // 初次打开显示底部控件5秒
+  const bottomControls = document.querySelectorAll('.hover-show');
+  const navHint = document.getElementById('navHint');
+  
+  bottomControls.forEach(el => el.classList.add('visible'));
+  if (navHint) navHint.style.opacity = '1';
+  
+  setTimeout(() => {
+    bottomControls.forEach(el => el.classList.remove('visible'));
+    if (navHint) navHint.style.opacity = '0';
+  }, 10000);
 }
 
 // 加载页面内容（带白色遮罩过渡效果）
