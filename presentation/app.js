@@ -5,7 +5,7 @@ const totalPages = config.pages.length;
 
 // DOM 元素
 const contentFrame = document.getElementById('contentFrame');
-const assetsList = document.getElementById('assetsList');
+
 const assetsTrigger = document.getElementById('assetsTrigger');
 const pageIndicator = document.getElementById('pageIndicator');
 const prevBtn = document.getElementById('prevBtn');
@@ -73,49 +73,46 @@ contentFrame.addEventListener('load', () => {
   }
 });
 
-// 更新素材列表
+// 更新素材列表 - 浮动图标方式
 function updateAssets(assets) {
-  // 关闭下拉框
-  const dropdown = document.getElementById('assetsDropdown');
-  if (dropdown) dropdown.classList.remove('open');
-  
   if (!assets || assets.length === 0) {
     assetsTrigger.classList.add('hidden');
-    assetsList.innerHTML = '';
+    assetsTrigger.innerHTML = '';
     return;
   }
   
   assetsTrigger.classList.remove('hidden');
   
-  assetsList.innerHTML = assets.map((asset, idx) => {
-    let icon, bgColor, iconColor;
+  assetsTrigger.innerHTML = assets.map((asset, idx) => {
+    let icon, bgColor, hoverColor, shadowColor;
     if (asset.type === 'video') {
       icon = 'fa-circle-play';
-      bgColor = 'bg-purple-50';
-      iconColor = 'text-purple-500';
+      bgColor = 'bg-purple-500';
+      hoverColor = 'hover:bg-purple-600';
+      shadowColor = 'shadow-purple-500/30';
     } else if (asset.type === 'page') {
       icon = 'fa-window-maximize';
-      bgColor = 'bg-green-50';
-      iconColor = 'text-green-500';
+      bgColor = 'bg-green-500';
+      hoverColor = 'hover:bg-green-600';
+      shadowColor = 'shadow-green-500/30';
     } else if (asset.type === 'link') {
       icon = 'fa-arrow-up-right-from-square';
-      bgColor = 'bg-blue-50';
-      iconColor = 'text-blue-500';
+      bgColor = 'bg-blue-500';
+      hoverColor = 'hover:bg-blue-600';
+      shadowColor = 'shadow-blue-500/30';
     } else {
       icon = 'fa-image';
-      bgColor = 'bg-indigo-50';
-      iconColor = 'text-indigo-500';
+      bgColor = 'bg-indigo-500';
+      hoverColor = 'hover:bg-indigo-600';
+      shadowColor = 'shadow-indigo-500/30';
     }
     
     const label = asset.label || asset.title || (asset.type === 'video' ? '视频' : asset.type === 'page' ? '页面' : asset.type === 'link' ? '外部链接' : '图片');
     return `
-      <div class="asset-item flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors" 
-           data-index="${idx}" data-type="${asset.type}" data-src="${asset.src}">
-        <div class="w-9 h-9 ${bgColor} rounded-lg flex items-center justify-center ${iconColor} text-lg">
-          <i class="fa-solid ${icon}"></i>
-        </div>
-        <span class="text-sm text-gray-600">${label}</span>
-      </div>
+      <button class="asset-icon w-9 h-9 rounded-lg ${bgColor} ${hoverColor} text-white text-sm cursor-pointer border-none transition-all flex items-center justify-center shadow-md ${shadowColor}" 
+              data-index="${idx}" data-type="${asset.type}" data-src="${asset.src}" title="${label}">
+        <i class="fa-solid ${icon}"></i>
+      </button>
     `;
   }).join('');
 }
@@ -266,9 +263,9 @@ function bindEvents() {
     }
   });
   
-  // 素材点击
-  assetsList.addEventListener('click', (e) => {
-    const item = e.target.closest('.asset-item');
+  // 素材图标点击
+  assetsTrigger.addEventListener('click', (e) => {
+    const item = e.target.closest('.asset-icon');
     if (item) {
       openLightbox(item.dataset.type, item.dataset.src);
     }
@@ -310,18 +307,6 @@ function bindEvents() {
     });
   });
   
-  // 素材按钮点击展开/关闭
-  const assetsBtn = document.getElementById('assetsBtn');
-  const assetsDropdown = document.getElementById('assetsDropdown');
-  const assetsCloseBtn = document.getElementById('assetsCloseBtn');
-  
-  assetsBtn.addEventListener('click', () => {
-    assetsDropdown.classList.toggle('open');
-  });
-  
-  assetsCloseBtn.addEventListener('click', () => {
-    assetsDropdown.classList.remove('open');
-  });
   
   // 目录按钮点击
   const tocBtn = document.getElementById('tocBtn');

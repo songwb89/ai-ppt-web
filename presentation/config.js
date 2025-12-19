@@ -120,13 +120,7 @@ const config = {
     {
       src: "pages/19-demo-showcase.html",
       title: "交互效果演示",
-      assets: [
-        {
-          type: "page",
-          src: "assets/demos/ethereal-canvas.html",
-          title: "Muse 灵感画廊"
-        }
-      ]
+      assets: []
     },
     {
       src: "pages/20-chapter-doc.html",
@@ -141,13 +135,7 @@ const config = {
     {
       src: "pages/22-prd-showcase.html",
       title: "文档输出效果",
-      assets: [
-        {
-          type: "page",
-          src: "assets/demos/login/login.html",
-          title: "教师登录注册PRD"
-        }
-      ]
+      assets: []
     },
     {
       src: "pages/23-flowchart-render.html",
@@ -172,13 +160,7 @@ const config = {
     {
       src: "pages/27-prototype-doc.html",
       title: "原型文档一体化",
-      assets: [
-        {
-          type: "page",
-          src: "assets/demos/login/login.html",
-          title: "教师登录注册演示"
-        }
-      ]
+      assets: []
     },
     {
       src: "pages/28-chapter-tips.html",
