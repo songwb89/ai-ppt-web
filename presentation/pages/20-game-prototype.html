@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游戏原型案例</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-white via-sky-50 to-indigo-50 text-gray-900 py-8 px-12">
+  <!-- 轻网格纹理 -->
+  <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle at 1px 1px, rgba(30,41,59,0.30) 1px, transparent 0); background-size: 16px 16px;"></div>
+  <!-- 光斑 -->
+  <div class="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-purple-200/35 blur-3xl rounded-full"></div>
+  <div class="pointer-events-none absolute -bottom-36 right-[-80px] w-[420px] h-[420px] bg-pink-200/28 blur-[110px] rounded-full"></div>
+
+  <!-- 标题 -->
+  <h2 class="relative text-3xl font-bold text-slate-900 mb-3">
+    <span class="mr-2">🎮</span>不止网页，游戏也行
+  </h2>
+  <p class="relative text-lg text-gray-500 mb-8">AI 同样可以制作游戏活动类的交互原型</p>
+
+  <!-- 演示卡片 -->
+  <a href="../assets/demos/puzzle_activity/index.html" target="_blank" class="relative group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl hover:border-purple-200 transition-all duration-300">
+    <!-- 预览图片区域 -->
+    <div class="relative bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      <img src="../assets/images/014.png" alt="拼图活动预览" class="max-h-[50vh] w-auto">
+      <!-- 悬停遮罩 -->
+      <div class="absolute inset-0 bg-purple-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div class="text-center text-white">
+          <i class="fa-solid fa-gamepad text-4xl mb-3"></i>
+          <p class="text-xl font-medium">🕹️ 点击体验完整效果</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 信息区域 -->
+    <div class="p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-puzzle-piece text-purple-500 text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-xl text-gray-900">拼图活动</h3>
+            <p class="text-gray-500">游戏化运营活动原型</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-purple-500">
+          <span class="text-sm">新窗口打开</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- 底部说明 -->
+  <p class="relative text-sm text-gray-400 mt-8">
+    <i class="fa-solid fa-lightbulb text-amber-400 mr-2"></i>
+    游戏类原型同样可以通过 AI 快速实现，包括动画、交互等
+  </p>
+</body>
+</html>

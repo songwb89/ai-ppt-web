@@ -123,72 +123,77 @@ const config = {
       assets: []
     },
     {
-      src: "pages/20-chapter-doc.html",
+      src: "pages/20-game-prototype.html",
+      title: "游戏原型案例",
+      assets: []
+    },
+    {
+      src: "pages/21-chapter-doc.html",
       title: "AI 写文档",
       assets: []
     },
     {
-      src: "pages/21-ai-ask-first.html",
+      src: "pages/22-ai-ask-first.html",
       title: "让 AI 先提问",
       assets: []
     },
     {
-      src: "pages/22-prd-showcase.html",
+      src: "pages/23-prd-showcase.html",
       title: "文档输出效果",
       assets: []
     },
     {
-      src: "pages/23-flowchart-render.html",
+      src: "pages/24-flowchart-render.html",
       title: "流程图自动渲染",
       assets: []
     },
     {
-      src: "pages/24-chapter-version.html",
+      src: "pages/25-chapter-version.html",
       title: "版本管理与协作",
       assets: []
     },
     {
-      src: "pages/25-auto-deploy.html",
+      src: "pages/26-auto-deploy.html",
       title: "提交即上线",
       assets: []
     },
     {
-      src: "pages/26-branch-version.html",
+      src: "pages/27-branch-version.html",
       title: "分支版本管理",
       assets: []
     },
     {
-      src: "pages/27-prototype-doc.html",
+      src: "pages/28-prototype-doc.html",
       title: "原型文档一体化",
       assets: []
     },
     {
-      src: "pages/28-chapter-tips.html",
+      src: "pages/29-chapter-tips.html",
       title: "和 AI 沟通的技巧",
       assets: []
     },
     {
-      src: "pages/29-tips.html",
+      src: "pages/30-tips.html",
       title: "8个沟通技巧",
       assets: []
     },
     {
-      src: "pages/30-tips-summary.html",
+      src: "pages/31-tips-summary.html",
       title: "技巧总结",
       assets: []
     },
     {
-      src: "pages/31-flow-review.html",
+      src: "pages/32-flow-review.html",
       title: "流程回顾",
       assets: []
     },
     {
-      src: "pages/32-resources.html",
+      src: "pages/33-resources.html",
       title: "资源分享",
       assets: []
     },
     {
-      src: "pages/33-qa.html",
+      src: "pages/34-qa.html",
       title: "Q&A",
       assets: []
     }
