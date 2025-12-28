@@ -1,0 +1,2778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼图大作战 - 手机预览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet">
+    <style>
+        :root {
+            /* 方案A：金蓝经典配色 - 柔和金 */
+            --gold-light: #E8D5A3;
+            --gold-main: #C9A86C;
+            --gold-dark: #A68B4B;
+            --gold-border: #B8976A;
+            --blue-dark: #1E3A5F;
+            --blue-main: #2A4A6F;
+            --blue-light: #3A5A7F;
+            --text-light: #FFFFFF;
+            --text-gold: #E8D5A3;
+            --text-muted: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: calc(50vh - 215px);
+            gap: 30px;
+        }
+
+        /* 漂浮光点背景 */
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .floating-particle {
+            position: absolute;
+            bottom: -20px;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(232,213,163,0.9) 0%, rgba(232,213,163,0) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(232,213,163,0.5);
+            animation: floatUp linear infinite;
+        }
+        .floating-particle:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; width: 3px; height: 3px; }
+        .floating-particle:nth-child(2) { left: 12%; animation-duration: 10s; animation-delay: -2s; width: 5px; height: 5px; }
+        .floating-particle:nth-child(3) { left: 20%; animation-duration: 7s; animation-delay: -4s; width: 4px; height: 4px; }
+        .floating-particle:nth-child(4) { left: 30%; animation-duration: 11s; animation-delay: -1s; width: 3px; height: 3px; }
+        .floating-particle:nth-child(5) { left: 40%; animation-duration: 9s; animation-delay: -6s; width: 6px; height: 6px; }
+        .floating-particle:nth-child(6) { left: 50%; animation-duration: 8s; animation-delay: -3s; width: 4px; height: 4px; }
+        .floating-particle:nth-child(7) { left: 60%; animation-duration: 12s; animation-delay: -5s; width: 3px; height: 3px; }
+        .floating-particle:nth-child(8) { left: 70%; animation-duration: 7s; animation-delay: -2s; width: 5px; height: 5px; }
+        .floating-particle:nth-child(9) { left: 80%; animation-duration: 10s; animation-delay: -4s; width: 4px; height: 4px; }
+        .floating-particle:nth-child(10) { left: 90%; animation-duration: 9s; animation-delay: -7s; width: 3px; height: 3px; }
+        @keyframes floatUp {
+            0% {
+                bottom: -20px;
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 400px;
+                opacity: 0;
+            }
+        }
+
+        /* 手机外壳 */
+        .phone-frame {
+            width: 884px;
+            height: 430px;
+            background: linear-gradient(145deg, #0d0d0d 0%, #050505 50%, #0a0a0a 100%);
+            border-radius: 45px;
+            padding: 18px 20px;
+            box-shadow: 
+                0 0 0 1px #1a1a1a,
+                0 25px 60px rgba(0,0,0,0.6),
+                0 10px 25px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .power-btn {
+            position: absolute;
+            top: -4px;
+            left: 100px;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #252525 60%, #151515 100%);
+            border-radius: 3px 3px 0 0;
+        }
+        .volume-up {
+            position: absolute;
+            top: -4px;
+            left: 170px;
+            width: 40px;
+            height: 4px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #252525 60%, #151515 100%);
+            border-radius: 3px 3px 0 0;
+        }
+        .volume-down {
+            position: absolute;
+            top: -4px;
+            left: 220px;
+            width: 40px;
+            height: 4px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #252525 60%, #151515 100%);
+            border-radius: 3px 3px 0 0;
+        }
+        .front-camera {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #1a1a2e 0%, #0a0a15 60%, #050508 100%);
+            border-radius: 50%;
+            border: 1px solid #252525;
+        }
+
+        .phone-screen {
+            width: 844px;
+            height: 390px;
+            background: #000;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* 游戏内容 */
+        .game-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10,25,50,0.6) 0%, rgba(15,35,65,0.7) 100%), 
+                        url('images/fGKTdKOL4.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 顶部栏 */
+        .top-bar {
+            background: linear-gradient(180deg, rgba(20,45,80,0.95) 0%, rgba(25,50,85,0.85) 50%, transparent 100%);
+            padding-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .help-btn i {
+            font-size: 16px !important;
+        }
+        .title-text {
+            font-family: 'LXGW WenKai', cursive;
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(180deg, #FFF5D6 0%, var(--gold-light) 40%, var(--gold-main) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+            letter-spacing: 3px;
+        }
+        /* 倒计时模块 - 居中 */
+        .countdown-module {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0,0,0,0.25);
+            padding: 3px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(200,170,100,0.3);
+            box-shadow: inset 0 1px 2px rgba(255,220,150,0.1), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .countdown-module i {
+            font-size: 14px;
+            color: var(--gold-light);
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+            line-height: 1;
+        }
+        .countdown-module .time {
+            font-family: 'LXGW WenKai', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--gold-light);
+            letter-spacing: 1px;
+            line-height: 1;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        }
+        .countdown-module .unit {
+            font-family: 'LXGW WenKai', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--gold-light);
+            margin-right: 2px;
+            line-height: 1;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        }
+        /* 右侧图标组 */
+        .top-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .icon-btn {
+            min-width: 28px; 
+            height: 28px;
+            background: transparent;
+            border: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+        .icon-btn i { 
+            font-size: 20px;
+            background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold-main) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+        }
+        .icon-btn.close-btn i {
+            font-size: 26px;
+        }
+
+        /* 主内容区 */
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column;
+            padding: 6px; 
+            min-height: 0; 
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 拼图和右侧的水平容器 */
+        .puzzle-row {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* 拼图区 */
+        .puzzle-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            position: relative;
+        }
+        .puzzle-btns {
+            display: flex;
+            justify-content: space-between;
+            width: 420px;
+            margin-top: 8px;
+        }
+        .request-btn-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .request-cooldown {
+            font-size: 12px;
+            color: #999;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .request-cooldown.show {
+            display: inline;
+        }
+        .action-btn.disabled {
+            background: linear-gradient(180deg, #6B6B6B 0%, #4A4A4A 100%);
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .puzzle-container {
+            width: 420px;
+            height: 280px;
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 3px;
+            background: rgba(30,58,95,0.5);
+            border: 2px solid var(--gold-border);
+            border-radius: 8px;
+            padding: 3px;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+            position: relative;
+        }
+        
+        /* 合成按钮悬浮层 */
+        .merge-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        /* 星星粒子容器 */
+        .merge-particles {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff 0%, #00d4ff 50%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00d4ff, 0 0 15px rgba(0,212,255,0.5);
+        }
+        .particle:nth-child(1) {
+            top: 10%;
+            left: 50%;
+            animation: particleFloat1 3s ease-in-out infinite;
+        }
+        .particle:nth-child(2) {
+            top: 25%;
+            left: 85%;
+            animation: particleFloat2 2.5s ease-in-out infinite 0.3s;
+        }
+        .particle:nth-child(3) {
+            top: 50%;
+            left: 95%;
+            animation: particleFloat1 3.5s ease-in-out infinite 0.6s;
+        }
+        .particle:nth-child(4) {
+            top: 75%;
+            left: 85%;
+            animation: particleFloat2 2.8s ease-in-out infinite 0.9s;
+        }
+        .particle:nth-child(5) {
+            top: 90%;
+            left: 50%;
+            animation: particleFloat1 3.2s ease-in-out infinite 1.2s;
+        }
+        .particle:nth-child(6) {
+            top: 75%;
+            left: 15%;
+            animation: particleFloat2 2.6s ease-in-out infinite 1.5s;
+        }
+        .particle:nth-child(7) {
+            top: 50%;
+            left: 5%;
+            animation: particleFloat1 3s ease-in-out infinite 1.8s;
+        }
+        .particle:nth-child(8) {
+            top: 25%;
+            left: 15%;
+            animation: particleFloat2 2.7s ease-in-out infinite 2.1s;
+        }
+        @keyframes particleFloat1 {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+            50% { transform: translateY(-15px) scale(1.3); opacity: 1; }
+        }
+        @keyframes particleFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(8px, -10px) scale(1.2); opacity: 1; }
+        }
+        .merge-overlay.hidden {
+            display: none;
+        }
+        .merge-btn {
+            width: 180px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+            animation: mergeBtnPulse 2s ease-in-out infinite;
+        }
+        .merge-btn:active {
+            transform: scale(0.95);
+        }
+        @keyframes mergeBtnPulse {
+            0%, 100% { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)) drop-shadow(0 0 15px rgba(0,200,255,0.3)); }
+            50% { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)) drop-shadow(0 0 30px rgba(0,200,255,0.6)); }
+        }
+        
+        /* 合成动画 */
+        .merge-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(255,255,255,0.9) 50%, transparent 70%);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 6px;
+        }
+        .merge-flash.active {
+            animation: mergeFlash 0.8s ease-out forwards;
+        }
+        @keyframes mergeFlash {
+            0% { opacity: 0; transform: scale(0.5); }
+            30% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+        
+        .puzzle-cell {
+            background: rgba(42,74,111,0.6);
+            border: 1px solid rgba(201,162,39,0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .puzzle-cell.unlocked {
+            border-color: var(--gold-main);
+            box-shadow: inset 0 0 8px rgba(255,215,0,0.2);
+        }
+        .puzzle-cell.locked {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .puzzle-cell.locked::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(20,40,70,0.85);
+        }
+        /* 碎片进度显示 - 右下角文字 */
+        .fragment-badge {
+            position: absolute;
+            right: 3px;
+            bottom: -1px;
+            z-index: 3;
+        }
+        .fragment-badge .count {
+            font-size: 10px;
+            font-weight: normal;
+            color: #E8D5A3;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.6);
+        }
+        .fragment-badge.complete .count {
+            color: #4ade80;
+        }
+        /* 格子序号 - 左上角 */
+        .cell-number {
+            position: absolute;
+            left: 3px;
+            top: 2px;
+            z-index: 3;
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+        .puzzle-cell:active { 
+            transform: scale(0.98);
+        }
+
+        /* 底部按钮 */
+        .bottom-btns { display: flex; gap: 10px; margin-top: 8px; }
+        .action-btn {
+            background: linear-gradient(180deg, #C9A86C 0%, #A68B4B 40%, #8B7340 100%);
+            border: 2px solid #8B7340;
+            color: #FFF8E7;
+            font-weight: bold;
+            padding: 0 20px;
+            height: 40px;
+            line-height: 36px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15px 70%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 8px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 25px 85%, rgba(255,255,255,0.3) 1px, transparent 1px);
+            mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+        }
+        .action-btn::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 35px 30%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 42px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 25px 15%, rgba(255,255,255,0.3) 1px, transparent 1px);
+            mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+        }
+        .action-btn:active { transform: scale(0.98); }
+        .action-btn.secondary {
+            background: linear-gradient(180deg, #4A9BD9 0%, #2E7AB8 40%, #1E5A8F 100%);
+            border: 2px solid #1E5A8F;
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .action-btn.disabled {
+            background: linear-gradient(180deg, #8A8A8A 0%, #6A6A6A 40%, #5A5A5A 100%);
+            border: 2px solid #4A4A4A;
+            color: rgba(255,255,255,0.7);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            cursor: not-allowed;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 右侧区域 */
+        .right-panel {
+            width: 220px;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .panel-box {
+            background: linear-gradient(180deg, rgba(30,58,95,0.95) 0%, rgba(25,50,85,0.95) 100%);
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .panel-box:first-child {
+            flex: 1;
+        }
+        .panel-box:last-child {
+            flex: 1;
+        }
+        .panel-title {
+            color: var(--gold-light);
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .chest-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chest-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chest-icon { font-size: 36px; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .chest-count { color: var(--gold-light); font-size: 11px; margin-top: 4px; }
+        .chest-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100px;
+            margin-left: 10px;
+        }
+        .panel-btn {
+            width: 100%;
+            padding: 0 12px;
+            height: 32px;
+            line-height: 28px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15px 70%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 8px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 25px 85%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 35px 60%, rgba(255,255,255,0.25) 1px, transparent 1px);
+            mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+        }
+        .panel-btn::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 35px 30%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 42px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 25px 15%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 15px 40%, rgba(255,255,255,0.25) 1px, transparent 1px);
+            mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+        }
+        .panel-btn .btn-decor {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .panel-btn .btn-decor::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            bottom: 2px;
+            width: 35px;
+            height: 20px;
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50% 80% 0 0;
+            transform: rotate(-15deg);
+        }
+        .panel-btn .btn-decor::after {
+            content: '';
+            position: absolute;
+            right: 5px;
+            top: 2px;
+            width: 35px;
+            height: 20px;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0 0 80% 50%;
+            transform: rotate(-15deg);
+        }
+        .panel-btn:active { transform: scale(0.98); }
+        .panel-btn.primary {
+            background: linear-gradient(180deg, #C9A86C 0%, #A68B4B 40%, #8B7340 100%);
+            border: 2px solid #8B7340;
+            color: #FFF8E7;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .panel-btn.secondary {
+            background: linear-gradient(180deg, #4A9BD9 0%, #2E7AB8 40%, #1E5A8F 100%);
+            border: 2px solid #1E5A8F;
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .panel-btn.disabled {
+            background: linear-gradient(180deg, #8A8A8A 0%, #6A6A6A 40%, #5A5A5A 100%);
+            border: 2px solid #4A4A4A;
+            color: rgba(255,255,255,0.7);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            cursor: not-allowed;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 大奖展示 */
+        .reward-list { 
+            display: flex; 
+            justify-content: space-between;
+            gap: 8px; 
+        }
+        .reward-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            flex: 1;
+        }
+        .reward-icon { font-size: 26px; }
+        .reward-icon-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .reward-check {
+            display: none;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #4ade80;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .reward-check.show {
+            display: flex;
+        }
+        .reward-check i {
+            font-size: 10px;
+            color: #fff;
+        }
+        .reward-label {
+            font-size: 10px;
+            color: var(--gold-light);
+            text-align: center;
+        }
+
+        /* 聊天入口 */
+        .chat-entry {
+            position: absolute;
+            left: 8px;
+            bottom: 8px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(180deg, var(--blue-main) 0%, var(--blue-dark) 100%);
+            border: 2px solid var(--gold-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        .chat-entry:active { transform: scale(0.95); }
+        .chat-entry i { color: var(--gold-light); font-size: 18px; }
+        .chat-entry.shake {
+            animation: chatPulse 0.6s ease-in-out 1;
+        }
+        @keyframes chatPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .chat-badge {
+            position: absolute;
+            top: -2px; right: -2px;
+            width: 14px; height: 14px;
+            background: #ef4444;
+            border-radius: 50%;
+            font-size: 9px;
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 6px #ef4444;
+        }
+        
+        /* Toast提示 */
+        .toast {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 开启宝箱结果页 */
+        .chest-result {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/10.png') center center / cover no-repeat;
+            z-index: 200;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+        .chest-result.show {
+            display: flex;
+            animation: resultFadeIn 0.3s ease-out forwards;
+        }
+        .chest-result.show .chest-result-content,
+        .chest-result.show .merge-reward-icon,
+        .chest-result.show .chest-result-continue {
+            opacity: 0;
+            animation: resultContentIn 0.4s ease-out 0.25s forwards;
+        }
+        @keyframes resultFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes resultContentIn {
+            from { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateY(0);
+            }
+        }
+        .chest-result-title {
+            font-family: 'LXGW WenKai', cursive;
+            font-size: 28px;
+            font-weight: bold;
+            color: #8B4513;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+        .chest-result-content {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .chest-result-item {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #E8C86B 0%, #D4A84A 100%);
+            border: 3px solid #C49A3C;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .chest-result-icon {
+            width: 60px;
+            height: 60px;
+            margin-top: -15px;
+        }
+        .merge-reward-icon {
+            width: 90px;
+            height: 90px;
+        }
+        /* 任务奖励结果页样式 */
+        .task-reward-result-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(210,180,120,0.5);
+            border: 2px solid rgba(180,150,100,0.6);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .task-reward-result-icon {
+            width: 64px;
+            height: 64px;
+        }
+        .task-reward-result-count {
+            position: absolute;
+            right: 8px;
+            bottom: 6px;
+            font-family: 'Arial', sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            color: #5C3D2E;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+        }
+        .chest-result-count {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -3px;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #5C3D2E;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+        }
+        .chest-result-name {
+            font-size: 12px;
+            color: #8B4513;
+            margin-top: 2px;
+        }
+        .chest-result-continue {
+            position: absolute;
+            bottom: 40px;
+            font-family: 'LXGW WenKai', cursive;
+            font-size: 16px;
+            font-weight: bold;
+            color: #5D4037;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+        .chest-result.show .chest-result-continue {
+            animation: resultContentIn 0.4s ease-out 0.25s forwards, continuePulse 1.5s ease-in-out 0.65s infinite;
+        }
+        @keyframes continuePulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* 聊天弹窗 - 抽屉式 */
+        .chat-modal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            background: linear-gradient(180deg, rgba(25,50,85,0.98) 0%, rgba(20,40,70,0.98) 100%);
+            border-right: 2px solid var(--gold-border);
+            border-radius: 0 12px 12px 0;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 80;
+        }
+        .chat-modal.show { 
+            display: flex;
+            transform: translateX(0);
+        }
+        .chat-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(201,162,39,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(30,58,95,0.5) 0%, transparent 100%);
+        }
+        .chat-header span { color: var(--gold-light); font-size: 13px; font-weight: bold; }
+        .chat-header i { color: var(--gold-light); cursor: pointer; font-size: 14px; }
+        .chat-messages { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .chat-messages::-webkit-scrollbar { display: none; }
+        
+        /* 普通聊天消息 */
+        .chat-msg {
+            background: rgba(42,74,111,0.5);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--text-light);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+        .chat-msg .content {
+            flex: 1;
+        }
+        .chat-msg .name { color: #7DD3FC; font-weight: bold; } /* 青蓝色用户名 */
+        .chat-msg .time, .chat-request-header .time {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            margin-left: auto;
+        }
+        
+        /* 求捐消息 */
+        .chat-request {
+            background: rgba(42,74,111,0.5);
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .chat-request.completed {
+            opacity: 0.6;
+        }
+        .chat-request-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .chat-request-header .name {
+            color: #7DD3FC; /* 青蓝色用户名 */
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .chat-request-header .tag {
+            background: rgba(232,168,108,0.3);
+            color: #E8A86C;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+        .chat-request-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* 碎片图标区 */
+        .chat-fragment-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(180deg, rgba(30,50,80,0.9) 0%, rgba(20,40,65,0.9) 100%);
+            border: 1px solid rgba(201,168,108,0.4);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .chat-fragment-icon img {
+            width: 28px;
+            height: 28px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+        }
+        .chat-request-info {
+            flex: 1;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .chat-request-info .fragment-name {
+            color: var(--gold-light);
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .chat-request-info .own-count {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .chat-request-info .own-count i {
+            font-size: 10px;
+        }
+        .chat-request-btn {
+            padding: 5px 14px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .chat-request-btn.donate {
+            background: linear-gradient(180deg, #5B9BD5 0%, #3A7BBD 100%);
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .chat-request-btn.donate:active { transform: scale(0.95); }
+        .chat-request-btn.donate.disabled {
+            background: linear-gradient(180deg, #6B6B6B 0%, #4A4A4A 100%);
+            color: #999;
+            cursor: not-allowed;
+        }
+        .chat-request-status {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .chat-request-status.done {
+            color: #4ade80;
+        }
+        .chat-request-status.waiting {
+            color: var(--text-muted);
+        }
+        .chat-request-status .donor {
+            color: #7DD3FC; /* 青蓝色捐赠者名 */
+        }
+        
+        /* 自己发的求捐 */
+        .chat-request.mine {
+            background: rgba(42,74,111,0.6);
+        }
+        .chat-request.mine .tag {
+            background: rgba(91,155,213,0.3);
+            color: #5B9BD5;
+        }
+        
+        /* 聊天输入区 */
+        .chat-input-area {
+            padding: 8px;
+            border-top: 1px solid rgba(201,162,39,0.3);
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .chat-input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(201,168,108,0.3);
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 11px;
+            color: var(--text-light);
+            outline: none;
+        }
+        .chat-input::placeholder { color: var(--text-muted); }
+        .chat-input:focus { border-color: var(--gold-main); }
+        .chat-emoji-btn {
+            width: 28px;
+            height: 28px;
+            background: transparent;
+            border: none;
+            color: var(--gold-light);
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .chat-send-btn {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(180deg, #E8D5A3 0%, #C9A86C 50%, #A68B4B 100%);
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            color: #4A3A20;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-send-btn:active { transform: scale(0.95); }
+        
+        /* 聊天遮罩 */
+        .chat-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 79;
+        }
+        .chat-overlay.show { display: block; }
+
+        /* 任务弹窗 */
+        .task-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 480px;
+            height: 360px;
+            background: linear-gradient(180deg, rgba(25,50,85,0.98) 0%, rgba(20,40,70,0.98) 100%);
+            border: 2px solid var(--gold-border);
+            border-radius: 12px;
+            flex-direction: column;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+        .task-modal.show { display: flex; }
+        
+        /* 活动说明弹窗 */
+        .help-modal {
+            width: 420px;
+            height: auto;
+            max-height: 340px;
+        }
+        .help-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .help-content::-webkit-scrollbar {
+            display: none;
+        }
+        .help-section {
+            margin-bottom: 16px;
+        }
+        .help-section:last-child {
+            margin-bottom: 0;
+        }
+        .help-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .help-title i {
+            font-size: 12px;
+            color: var(--gold-main);
+        }
+        .help-text {
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.6;
+            padding-left: 18px;
+        }
+        
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .modal-overlay.show { display: block; }
+        
+        /* 索要碎片模式遮罩 */
+        .request-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 50;
+        }
+        .request-overlay.show { display: block; }
+        .request-hint {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            border: 1px solid var(--gold-border);
+            border-radius: 20px;
+            padding: 6px 16px;
+            color: var(--gold-light);
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            z-index: 52;
+        }
+        
+        /* 索要模式下的拼图区域 */
+        .puzzle-section.request-mode .puzzle-container {
+            position: relative;
+            z-index: 51;
+        }
+        .puzzle-section.request-mode .puzzle-btns {
+            position: relative;
+            z-index: 49;
+        }
+        .puzzle-section.request-mode .puzzle-cell.locked {
+            cursor: pointer;
+            animation: requestPulse 1.5s ease-in-out infinite;
+        }
+        .puzzle-section.request-mode .puzzle-cell.locked::before {
+            content: '索要';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            font-size: 11px;
+            color: var(--gold-light);
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .puzzle-section.request-mode .puzzle-cell.unlocked {
+            cursor: not-allowed;
+        }
+        @keyframes requestPulse {
+            0%, 100% { box-shadow: inset 0 0 12px 4px rgba(232,213,163,0.5); }
+            50% { box-shadow: inset 0 0 20px 8px rgba(232,213,163,0.9); }
+        }
+        
+        /* 弹窗头部 */
+        .task-modal-header {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            position: relative;
+            background: linear-gradient(180deg, rgba(30,58,95,0.3) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(200,170,100,0.15);
+        }
+        .task-modal-close {
+            position: absolute;
+            right: -36px;
+            top: -8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .task-modal-close:active {
+            transform: scale(0.9);
+        }
+        .task-modal-close .close-x {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        .task-modal-close .close-x::before,
+        .task-modal-close .close-x::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 28px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, var(--gold-light) 20%, var(--gold-light) 80%, transparent 100%);
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .task-modal-close .close-x::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        .task-modal-close .close-x::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        
+        /* 标签页 */
+        .task-tabs {
+            display: flex;
+            gap: 0;
+        }
+        .task-tab {
+            padding: 12px 32px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .task-tab.active {
+            color: var(--gold-light);
+            text-shadow: 0 0 8px rgba(232,213,163,0.6), 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .task-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, var(--gold-main) 50%, transparent 100%);
+            box-shadow: 0 0 8px rgba(201,168,108,0.6);
+        }
+        
+        /* 任务列表 */
+        .task-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        .task-list::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(42,74,111,0.4);
+            border: 1px solid rgba(201,168,108,0.2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            gap: 12px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .task-item.completed {
+            opacity: 0.7;
+        }
+        /* 奖励图标方框 */
+        .task-reward-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(180deg, rgba(30,50,80,0.9) 0%, rgba(20,40,65,0.9) 100%);
+            border: 1px solid rgba(201,168,108,0.4);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+        .task-reward-box img {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+        }
+        .task-reward-box .reward-count {
+            position: absolute;
+            right: 2px;
+            bottom: 1px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--gold-light);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        /* 成就奖励图标（无边框） */
+        .achievement-reward {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .achievement-reward img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        .task-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .task-name {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .task-completed-tag {
+            min-width: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #8B7355;
+            font-size: 12px;
+        }
+        .task-completed-tag i {
+            color: #8B7355;
+        }
+        .task-reward {
+            display: none;
+        }
+        .task-reward img {
+            display: none;
+        }
+        .task-btn {
+            min-width: 70px;
+            padding: 7px 18px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+        .task-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 12px 70%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 6px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 20px 85%, rgba(255,255,255,0.3) 1px, transparent 1px);
+            mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+        }
+        .task-btn::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 40px;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 28px 30%, rgba(255,255,255,0.5) 1.5px, transparent 1.5px),
+                radial-gradient(circle at 34px 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 20px 15%, rgba(255,255,255,0.3) 1px, transparent 1px);
+            mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(-45deg, black 0%, transparent 70%);
+        }
+        .task-btn:active {
+            transform: scale(0.95);
+        }
+        .task-btn.claim {
+            background: linear-gradient(180deg, #4A9BD9 0%, #2E7AB8 40%, #1E5A8F 100%);
+            border: 2px solid #1E5A8F;
+            color: #fff;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.2),
+                0 2px 6px rgba(0,0,0,0.3),
+                0 0 12px rgba(91,155,213,0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 6px rgba(0,0,0,0.3), 0 0 12px rgba(91,155,213,0.4); }
+            50% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(91,155,213,0.6); }
+        }
+        /* 领取按钮点击动画 */
+        @keyframes claimClick {
+            0% { transform: scale(1); }
+            30% { transform: scale(0.9); }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes claimSuccess {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; box-shadow: 0 0 30px rgba(232,213,163,0.8); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .task-btn.claiming {
+            animation: claimClick 0.3s ease-out;
+        }
+        .task-btn.claim-success {
+            animation: claimSuccess 0.4s ease-out forwards;
+        }
+        /* 已领取标签出现动画 */
+        @keyframes tagAppear {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .task-completed-tag.animate {
+            animation: tagAppear 0.3s ease-out;
+        }
+        .task-btn.disabled {
+            background: linear-gradient(180deg, #8A8A8A 0%, #6A6A6A 40%, #5A5A5A 100%);
+            border: 2px solid #4A4A4A;
+            color: rgba(255,255,255,0.7);
+            cursor: not-allowed;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .task-btn.goto {
+            background: linear-gradient(180deg, #C9A86C 0%, #A68B4B 40%, #8B7340 100%);
+            border: 2px solid #8B7340;
+            color: #FFF8E7;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* 底部刷新倒计时 */
+        .task-footer {
+            padding: 10px 12px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(200,170,100,0.2);
+        }
+
+        /* 功能点列表 */
+        .feature-list {
+            max-width: 320px;
+        }
+        .feature-item {
+            padding: 8px 0;
+            font-size: 13px;
+            cursor: pointer;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        .feature-title {
+            font-weight: bold;
+        }
+        .feature-item:active {
+            color: var(--gold-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="power-btn"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        <div class="front-camera"></div>
+        
+        <div class="phone-screen">
+            <div class="game-container">
+                <!-- 漂浮光点 -->
+                <div class="floating-particles">
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                    <div class="floating-particle"></div>
+                </div>
+                
+                <!-- 顶部栏 -->
+                <div class="top-bar flex items-center px-10 py-1">
+                    <!-- 左侧：标题 + 帮助 -->
+                    <div class="title-group">
+                        <div class="title-text">拼图大作战</div>
+                        <div class="icon-btn help-btn" id="helpBtn" title="规则说明">
+                            <i class="fas fa-circle-question"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 中间：倒计时 -->
+                    <div class="countdown-module">
+                        <i class="fas fa-clock"></i>
+                        <span class="time" id="countdown-days">1</span><span class="unit">天</span>
+                        <span class="time" id="countdown-time">08:25:43</span>
+                    </div>
+                    
+                    <!-- 右侧：商店 + 关闭 -->
+                    <div class="top-icons">
+                        <div class="icon-btn" title="商店" style="width: auto; margin-right: 20px;">
+                            <img src="images/01.png" alt="商店" style="height: 32px;">
+                        </div>
+                        <div class="icon-btn close-btn" title="返回" style="margin-right: -20px;">
+                            <i class="fas fa-reply"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主内容区 -->
+                <div class="main-content">
+                    <div class="puzzle-row">
+                        <div class="puzzle-section">
+                            <div class="puzzle-container" id="puzzleGrid">
+                                <!-- 合成按钮悬浮层 -->
+                                <div class="merge-overlay" id="mergeOverlay">
+                                    <div class="merge-particles">
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                    </div>
+                                    <img src="images/11.png" alt="点击合成" class="merge-btn" id="mergeBtn">
+                                </div>
+                            </div>
+                            <div class="puzzle-btns">
+                                <div class="request-btn-group">
+                                    <button class="action-btn disabled" id="requestBtn">
+                                        <i class="fas fa-hand-holding-heart mr-1"></i>索要碎片
+                                    </button>
+                                    <span class="request-cooldown" id="requestCooldown"></span>
+                                </div>
+                                <button class="action-btn secondary" id="taskBtn">
+                                    <i class="fas fa-tasks mr-1"></i>任务
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="right-panel">
+                            <div class="panel-box">
+                                <div class="panel-title">点亮任意2格开启宝箱</div>
+                                <div class="chest-row">
+                                    <div class="chest-left">
+                                        <img src="images/02.png" alt="宝箱" class="chest-icon" style="width: 48px; height: 48px;">
+                                        <div class="chest-count">剩余4次</div>
+                                    </div>
+                                    <div class="chest-btns">
+                                        <button class="panel-btn primary" id="openChestBtn"><span class="btn-decor"></span>开启宝箱</button>
+                                        <button class="panel-btn secondary" id="viewPoolBtn"><span class="btn-decor"></span>查看奖池</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-box">
+                                <div class="panel-title">完成轮数拼图大奖</div>
+                                <div class="reward-list">
+                                    <div class="reward-item" id="reward1">
+                                        <div class="reward-icon-wrapper">
+                                            <img src="images/03.png" alt="第一轮奖励" class="reward-icon" style="width: 44px; height: 44px;">
+                                            <span class="reward-check" id="reward1Check"><i class="fas fa-check"></i></span>
+                                        </div>
+                                        <div class="reward-label">第一轮</div>
+                                    </div>
+                                    <div class="reward-item">
+                                        <img src="images/04.png" alt="第三轮奖励" class="reward-icon" style="width: 44px; height: 44px;">
+                                        <div class="reward-label">第三轮</div>
+                                    </div>
+                                    <div class="reward-item">
+                                        <img src="images/05.png" alt="第十轮奖励" class="reward-icon" style="width: 44px; height: 44px;">
+                                        <div class="reward-label">第十轮</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-entry" id="chatEntry">
+                    <i class="fas fa-comments"></i>
+                    <div class="chat-badge">3</div>
+                </div>
+                
+                <!-- Toast提示 -->
+                <div class="toast" id="toast"></div>
+
+                <!-- 聊天遮罩 -->
+                <div class="chat-overlay" id="chatOverlay"></div>
+                
+                <!-- 聊天面板 - 抽屉式 -->
+                <div class="chat-modal" id="chatModal">
+                    <div class="chat-header">
+                        <span><i class="fas fa-users mr-1"></i>家族聊天</span>
+                        <i class="fas fa-times" id="closeChat"></i>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- 普通聊天消息 -->
+                        <div class="chat-msg"><span class="name">星辰大海：</span><span class="content">大家好！</span><span class="time">昨天 20:15</span></div>
+                        
+                        <!-- 别人发的求捐消息 - 我有碎片可捐 -->
+                        <div class="chat-request" data-fragment="3" data-owner="夜雨听风">
+                            <div class="chat-request-header">
+                                <span class="name">夜雨听风</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">30分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">3号碎片</div>
+                                    <div class="own-count"><i class="fas fa-cube"></i> 我有 ×3</div>
+                                </div>
+                                <button class="chat-request-btn donate">捐赠</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 别人发的求捐消息 - 我没有碎片 -->
+                        <div class="chat-request unavailable" data-fragment="8" data-owner="小萌新">
+                            <div class="chat-request-header">
+                                <span class="name">小萌新</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">25分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">8号碎片</div>
+                                    <div class="own-count"><i class="fas fa-cube"></i> 我有 ×0</div>
+                                </div>
+                                <button class="chat-request-btn donate disabled">捐赠</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 别人发的求捐消息 - 已有人捐赠 -->
+                        <div class="chat-request completed" data-fragment="5" data-owner="剑舞九天">
+                            <div class="chat-request-header">
+                                <span class="name">剑舞九天</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">18分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">5号碎片</div>
+                                </div>
+                                <div class="chat-request-status done">
+                                    <i class="fas fa-check-circle"></i> 已捐赠
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 别人发的求捐消息 - 别人捐赠的 -->
+                        <div class="chat-request completed" data-fragment="12" data-owner="月下独酌">
+                            <div class="chat-request-header">
+                                <span class="name">月下独酌</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">10分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">12号碎片</div>
+                                </div>
+                                <div class="chat-request-status done">
+                                    <span class="donor">青云志</span> 已捐 <i class="fas fa-gift"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 自己发的求捐消息 - 等待中 -->
+                        <div class="chat-request mine" data-fragment="7">
+                            <div class="chat-request-header">
+                                <span class="name">我</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">5分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">7号碎片</div>
+                                </div>
+                                <div class="chat-request-status waiting">
+                                    <i class="fas fa-clock"></i> 等待中
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 自己发的求捐消息 - 已收到 -->
+                        <div class="chat-request mine completed" data-fragment="2">
+                            <div class="chat-request-header">
+                                <span class="name">我</span>
+                                <span class="tag">求捐</span>
+                                <span class="time">3分钟前</span>
+                            </div>
+                            <div class="chat-request-content">
+                                <div class="chat-fragment-icon">
+                                    <img src="images/06.png" alt="碎片">
+                                </div>
+                                <div class="chat-request-info">
+                                    <div class="fragment-name">2号碎片</div>
+                                </div>
+                                <div class="chat-request-status done">
+                                    <span class="donor">风起云涌</span> 已捐 <i class="fas fa-gift"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-msg"><span class="name">风起云涌：</span><span class="content">今天运气不错~</span><span class="time">刚刚</span></div>
+                    </div>
+                    
+                    <!-- 输入区域 -->
+                    <div class="chat-input-area">
+                        <button class="chat-emoji-btn"><i class="fas fa-smile"></i></button>
+                        <input type="text" class="chat-input" id="chatInput" placeholder="输入消息...">
+                        <button class="chat-send-btn" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <!-- 索要碎片模式遮罩 -->
+                <div class="request-overlay" id="requestOverlay">
+                    <div class="request-hint">点击需要的碎片进行索要</div>
+                </div>
+
+                <!-- 活动说明弹窗遮罩 -->
+                <div class="modal-overlay" id="helpOverlay"></div>
+                
+                <!-- 活动说明弹窗 -->
+                <div class="task-modal help-modal" id="helpModal">
+                    <div class="task-modal-header">
+                        <div class="task-tabs" style="justify-content:center; width:100%;">
+                            <div style="padding:14px 0; font-size:16px; color:var(--gold-light); font-weight:bold;">活动说明</div>
+                        </div>
+                        <div class="task-modal-close" id="closeHelpModal">
+                            <span class="close-x"></span>
+                        </div>
+                    </div>
+                    <div class="help-content">
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-puzzle-piece"></i> 活动玩法</div>
+                            <div class="help-text">收集碎片点亮拼图格子，每个格子需要对应的碎片才能激活。当所有格子都点亮后，点击「合成」完成拼图，获得丰厚奖励并进入下一轮拼图挑战！</div>
+                        </div>
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-gem"></i> 碎片获取</div>
+                            <div class="help-text">
+                                • 每日签到：首次登录即可领取<br>
+                                • 在线时长：累计在线达标可领取<br>
+                                • 竞技场任务：完成指定挑战次数<br>
+                                • 主线关卡：挑战关卡概率掉落<br>
+                                • 地牢探索：不同层数概率掉落<br>
+                                • 索要碎片：向家族成员索要
+                            </div>
+                        </div>
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-box-open"></i> 宝箱奖励</div>
+                            <div class="help-text">每点亮任意2个格子，可开启1次宝箱。宝箱包含固定奖励和随机奖励，点击「查看奖池」可预览所有可能获得的物品。</div>
+                        </div>
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-trophy"></i> 轮数大奖</div>
+                            <div class="help-text">完成指定轮数的拼图可领取大奖！第1轮、第3轮、第10轮分别有丰厚奖励等你来拿。</div>
+                        </div>
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-medal"></i> 成就系统</div>
+                            <div class="help-text">完成特定目标可获得成就奖励，如累计获得碎片、连续获得同一碎片、累计收到/捐赠碎片等。</div>
+                        </div>
+                        <div class="help-section">
+                            <div class="help-title"><i class="fas fa-clock"></i> 活动时间</div>
+                            <div class="help-text">活动持续21天，每日任务0点刷新。活动结束后未使用的碎片将被回收并发放补偿，请及时参与！</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务弹窗遮罩 -->
+                <div class="modal-overlay" id="taskOverlay"></div>
+                
+                <!-- 任务弹窗 -->
+                <div class="task-modal" id="taskModal">
+                    <div class="task-modal-header">
+                        <div class="task-tabs">
+                            <button class="task-tab active" data-tab="task">任务</button>
+                            <button class="task-tab" data-tab="achievement">成就</button>
+                        </div>
+                        <div class="task-modal-close" id="closeTaskModal">
+                            <span class="close-x"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="task-list" id="taskList">
+                        <!-- 任务1：可领取 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/06.png" alt="奖励">
+                                <span class="reward-count">10</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">今日活动签到</div>
+                            </div>
+                            <button class="task-btn claim" id="signInClaimBtn">领取</button>
+                        </div>
+                        
+                        <!-- 任务2：未完成 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/06.png" alt="奖励">
+                                <span class="reward-count">20</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">在线5分钟：<span id="onlineCountdown">03:24</span></div>
+                            </div>
+                            <button class="task-btn disabled">领取</button>
+                        </div>
+                        
+                        <!-- 任务3：前往 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/06.png" alt="奖励">
+                                <span class="reward-count">50</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">今日主线关卡获得碎片：3/5</div>
+                            </div>
+                            <button class="task-btn goto">去完成</button>
+                        </div>
+                        
+                        <!-- 任务4：已领取 -->
+                        <div class="task-item completed">
+                            <div class="task-reward-box">
+                                <img src="images/06.png" alt="奖励">
+                                <span class="reward-count">50</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">今日地牢关卡获得碎片：5/5</div>
+                            </div>
+                            <div class="task-completed-tag">
+                                <i class="fas fa-check-circle"></i>
+                                <span>已领取</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 成就列表 -->
+                    <div class="task-list achievement-list" id="achievementList" style="display: none;">
+                        <!-- 成就1：可领取 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/07.png" alt="奖励">
+                                <span class="reward-count">10</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">累计获得10碎片</div>
+                            </div>
+                            <button class="task-btn claim" data-achievement="1">领取</button>
+                        </div>
+                        
+                        <!-- 成就2：可领取 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/09.png" alt="奖励">
+                                <span class="reward-count">10</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">连续2次获得同一碎片</div>
+                            </div>
+                            <button class="task-btn claim" data-achievement="2">领取</button>
+                        </div>
+                        
+                        <!-- 成就3：前往 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/08.png" alt="奖励">
+                                <span class="reward-count">20</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">累计收到碎片50个</div>
+                            </div>
+                            <button class="task-btn goto">前往</button>
+                        </div>
+                        
+                        <!-- 成就4：前往 -->
+                        <div class="task-item">
+                            <div class="task-reward-box">
+                                <img src="images/08.png" alt="奖励">
+                                <span class="reward-count">30</span>
+                            </div>
+                            <div class="task-info">
+                                <div class="task-name">累计捐赠碎片20个</div>
+                            </div>
+                            <button class="task-btn goto">前往</button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-footer">
+                        <span>任务刷新倒计时：<span id="taskRefreshCountdown">23:34:19</span></span>
+                    </div>
+                </div>
+                
+                <!-- 查看奖池弹窗遮罩 -->
+                <div class="modal-overlay" id="poolOverlay"></div>
+                
+                <!-- 查看奖池弹窗（复用 task-modal 风格） -->
+                <div class="task-modal pool-modal" id="poolModal" style="width:400px; height:340px;">
+                    <div class="task-modal-header">
+                        <div class="task-tabs" style="justify-content:center; width:100%;">
+                            <div style="padding:14px 0; font-size:16px; color:var(--gold-light); font-weight:bold;">奖池</div>
+                        </div>
+                        <div class="task-modal-close" id="closePoolModal" style="right:-28px; top:-6px;">
+                            <span class="close-x"></span>
+                        </div>
+                    </div>
+                    <div class="task-list" style="padding:18px; display:flex; flex-direction:column; gap:12px;">
+                        <div style="color:var(--gold-light); font-size:13px; font-weight:bold; text-align:left; margin-bottom:6px;">必得奖励</div>
+                        <div class="reward-list" style="gap:6px; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; align-items:center; width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/09.png" alt="必得1" style="width:48px; height:48px;">
+                                </div>
+                                <span style="font-size:12px; color:#fff; font-weight:bold; text-shadow:1px 1px 2px rgba(0,0,0,0.8);">×1000</span>
+                            </div>
+                            <div style="display:flex; flex-direction:column; align-items:center; width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/08.png" alt="必得2" style="width:48px; height:48px;">
+                                </div>
+                                <span style="font-size:12px; color:#fff; font-weight:bold; text-shadow:1px 1px 2px rgba(0,0,0,0.8);">×50</span>
+                            </div>
+                            <div style="display:flex; flex-direction:column; align-items:center; width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/07.png" alt="必得3" style="width:48px; height:48px;">
+                                </div>
+                                <span style="font-size:12px; color:#fff; font-weight:bold; text-shadow:1px 1px 2px rgba(0,0,0,0.8);">×50</span>
+                            </div>
+                        </div>
+
+                        <div style="color:var(--gold-light); font-size:13px; font-weight:bold; text-align:left; margin-top:8px;">概率获得奖励</div>
+                        <div class="reward-list" style="gap:6px; align-items:flex-start;">
+                            <div style="width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/03.png" alt="概率1" style="width:48px; height:48px;">
+                                </div>
+                            </div>
+                            <div style="width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/04.png" alt="概率2" style="width:48px; height:48px;">
+                                </div>
+                            </div>
+                            <div style="width:64px;">
+                                <div class="task-reward-box" style="width:64px; height:64px; background:transparent; border:none; box-shadow:none;">
+                                    <img src="images/05.png" alt="概率3" style="width:48px; height:48px;">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- 开启宝箱结果页 -->
+                <div class="chest-result" id="chestResult">
+                    <div class="chest-result-content">
+                        <div class="chest-result-item">
+                            <img src="images/09.png" alt="金币" class="chest-result-icon">
+                            <div class="chest-result-count">1000</div>
+                        </div>
+                    </div>
+                    <div class="chest-result-continue" id="chestResultContinue">点击继续</div>
+                </div>
+
+                <!-- 合成奖励结果页 -->
+                <div class="chest-result" id="mergeResult">
+                    <div class="chest-result-content">
+                        <img src="images/03.png" alt="合成奖励" class="merge-reward-icon">
+                    </div>
+                    <div class="chest-result-continue" id="mergeResultContinue">点击继续</div>
+                </div>
+
+                <!-- 任务奖励结果页 -->
+                <div class="chest-result" id="taskRewardResult">
+                    <div class="chest-result-content">
+                        <div class="task-reward-result-item">
+                            <img src="images/06.png" alt="碎片" class="task-reward-result-icon">
+                            <div class="task-reward-result-count" id="taskRewardCount">10</div>
+                        </div>
+                    </div>
+                    <div class="chest-result-continue" id="taskRewardContinue">点击继续</div>
+                </div>
+
+                <!-- 成就奖励结果页 -->
+                <div class="chest-result" id="achievementRewardResult">
+                    <div class="chest-result-content">
+                        <div class="task-reward-result-item">
+                            <img src="images/07.png" alt="奖励" class="task-reward-result-icon" id="achievementRewardIcon">
+                            <div class="task-reward-result-count" id="achievementRewardCount">10</div>
+                        </div>
+                    </div>
+                    <div class="chest-result-continue" id="achievementRewardContinue">点击继续</div>
+                </div>
+            </div><!-- game-container -->
+        </div><!-- phone-screen -->
+    </div><!-- phone-frame -->
+
+    <!-- 功能点列表 -->
+    <div class="feature-list">
+        <div class="feature-item" data-action="merge"><span class="feature-title">1. 点击合成：</span><span class="feature-desc">集齐拼图后点击中间按钮，播放动画并切换下一张拼图，弹出奖励</span></div>
+        <div class="feature-item" data-action="chest"><span class="feature-title">2. 开启宝箱：</span><span class="feature-desc">点击弹出奖励结果页</span></div>
+        <div class="feature-item" data-action="pool"><span class="feature-title">3. 查看奖池：</span><span class="feature-desc">点击弹出奖池预览弹窗</span></div>
+        <div class="feature-item" data-action="request"><span class="feature-title">4. 索要碎片：</span><span class="feature-desc">点击进入索要模式，可点击未解锁格子发送求捐消息</span></div>
+        <div class="feature-item" data-action="task"><span class="feature-title">5. 任务：</span><span class="feature-desc">点击弹出任务/成就弹窗，可切换标签，可点击领取</span></div>
+        <div class="feature-item" data-action="chat"><span class="feature-title">6. 聊天气泡：</span><span class="feature-desc">点击展开家族聊天面板，可发消息、捐赠碎片</span></div>
+        <div class="feature-item" data-action="help"><span class="feature-title">7. 帮助(?)：</span><span class="feature-desc">点击弹出活动说明</span></div>
+    </div>
+
+    <script>
+        // 拼图状态：0=待合成（全部解锁），1=进行中（部分解锁）
+        let puzzleState = 0;
+        
+        // 第一张拼图（待合成状态）- 全部解锁
+        const puzzle1 = {
+            image: 'images/fGKZsTbGv.jpg',
+            unlockedCells: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+            fragmentData: [
+                { required: 2, collected: 5 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 4 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 8 },
+                { required: 2, collected: 4 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 6 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 3 },
+            ]
+        };
+        
+        // 第二张拼图（进行中状态）- 部分解锁
+        const puzzle2 = {
+            image: 'images/fGKZ8y8mA.png',
+            unlockedCells: [0, 1, 4, 5, 6, 9, 10],
+            fragmentData: [
+                { required: 2, collected: 5 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 1 },
+                { required: 2, collected: 0 },
+                { required: 2, collected: 8 },
+                { required: 2, collected: 4 },
+                { required: 2, collected: 2 },
+                { required: 2, collected: 1 },
+                { required: 2, collected: 0 },
+                { required: 2, collected: 6 },
+                { required: 2, collected: 3 },
+                { required: 2, collected: 1 },
+                { required: 2, collected: 0 },
+                { required: 2, collected: 1 },
+                { required: 2, collected: 0 },
+                { required: 2, collected: 1 },
+            ]
+        };
+        
+        const grid = document.getElementById('puzzleGrid');
+        const mergeOverlay = document.getElementById('mergeOverlay');
+        const mergeBtn = document.getElementById('mergeBtn');
+        
+        // 渲染拼图
+        function renderPuzzle(puzzleData, showMergeBtn) {
+            // 清空现有格子（保留合成按钮层）
+            const cells = grid.querySelectorAll('.puzzle-cell');
+            cells.forEach(cell => cell.remove());
+            
+            // 移除闪光效果
+            const flash = grid.querySelector('.merge-flash');
+            if (flash) flash.remove();
+            
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                
+                const row = Math.floor(i / 4);
+                const col = i % 4;
+                cell.style.backgroundImage = `url('${puzzleData.image}')`;
+                cell.style.backgroundSize = '400% 400%';
+                cell.style.backgroundPosition = `${col * 33.33}% ${row * 33.33}%`;
+                
+                const data = puzzleData.fragmentData[i];
+                
+                if (puzzleData.unlockedCells.includes(i)) {
+                    cell.classList.add('unlocked');
+                } else {
+                    cell.classList.add('locked');
+                }
+                
+                const badge = document.createElement('div');
+                badge.className = 'fragment-badge';
+                if (data.collected >= data.required) {
+                    badge.classList.add('complete');
+                }
+                
+                const count = document.createElement('span');
+                count.className = 'count';
+                count.textContent = `${data.collected}/${data.required}`;
+                
+                badge.appendChild(count);
+                cell.appendChild(badge);
+                
+                const cellNumber = document.createElement('div');
+                cellNumber.className = 'cell-number';
+                cellNumber.textContent = i + 1;
+                cell.appendChild(cellNumber);
+                
+                grid.appendChild(cell);
+            }
+            
+            // 显示/隐藏合成按钮
+            if (showMergeBtn) {
+                mergeOverlay.classList.remove('hidden');
+            } else {
+                mergeOverlay.classList.add('hidden');
+            }
+        }
+        
+        // 合成动画
+        function playMergeAnimation(callback) {
+            // 创建闪光效果
+            const flash = document.createElement('div');
+            flash.className = 'merge-flash';
+            grid.appendChild(flash);
+            
+            // 隐藏合成按钮
+            mergeOverlay.classList.add('hidden');
+            
+            // 触发动画
+            setTimeout(() => {
+                flash.classList.add('active');
+            }, 50);
+            
+            // 动画结束后回调
+            setTimeout(() => {
+                if (callback) callback();
+            }, 800);
+        }
+        
+        // 点击合成按钮
+        mergeBtn.addEventListener('click', () => {
+            playMergeAnimation(() => {
+                puzzleState = 1;
+                renderPuzzle(puzzle2, false);
+                // 第一轮奖励显示已领取绿勾
+                document.getElementById('reward1Check').classList.add('show');
+                // 启用索要碎片按钮
+                document.getElementById('requestBtn').classList.remove('disabled');
+                // 延迟0.5秒后弹出合成奖励结果页
+                setTimeout(() => {
+                    document.getElementById('mergeResult').classList.add('show');
+                }, 500);
+            });
+        });
+        
+        // 关闭合成奖励结果页
+        document.getElementById('mergeResultContinue').addEventListener('click', () => {
+            document.getElementById('mergeResult').classList.remove('show');
+        });
+        
+        // 初始渲染第一张拼图（待合成状态）
+        renderPuzzle(puzzle1, true);
+
+        // 聊天面板
+        const chatModal = document.getElementById('chatModal');
+        const chatOverlay = document.getElementById('chatOverlay');
+        const chatMessages = document.getElementById('chatMessages');
+        
+        document.getElementById('chatEntry').addEventListener('click', () => {
+            chatModal.classList.add('show');
+            chatOverlay.classList.add('show');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+        document.getElementById('closeChat').addEventListener('click', () => {
+            chatModal.classList.remove('show');
+            chatOverlay.classList.remove('show');
+        });
+        chatOverlay.addEventListener('click', () => {
+            chatModal.classList.remove('show');
+            chatOverlay.classList.remove('show');
+        });
+        
+        // 发送消息
+        document.getElementById('chatSendBtn').addEventListener('click', () => {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (msg) {
+                const newMsg = document.createElement('div');
+                newMsg.className = 'chat-msg';
+                newMsg.innerHTML = `<span class="name">我：</span><span class="content">${msg}</span><span class="time">刚刚</span>`;
+                chatMessages.appendChild(newMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                input.value = '';
+            }
+        });
+        
+        // 回车发送
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('chatSendBtn').click();
+            }
+        });
+        
+        // 捐赠按钮点击
+        document.querySelectorAll('.chat-request-btn.donate:not(.disabled)').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const request = this.closest('.chat-request');
+                const fragment = request.dataset.fragment;
+                const owner = request.dataset.owner;
+                
+                // 替换按钮为已捐赠状态
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'chat-request-status';
+                statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> 已捐赠';
+                this.replaceWith(statusDiv);
+                
+                // 添加系统消息
+                const sysMsg = document.createElement('div');
+                sysMsg.className = 'chat-msg';
+                sysMsg.innerHTML = `<span class="name">系统：</span><span class="content">你向${owner}捐赠了${fragment}号碎片</span><span class="time">刚刚</span>`;
+                chatMessages.appendChild(sysMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        });
+
+        document.getElementById('openChestBtn').addEventListener('click', () => {
+            const btn = document.getElementById('openChestBtn');
+            if (btn.classList.contains('disabled')) return;
+            
+            document.getElementById('chestResult').classList.add('show');
+            
+            // 开启后：数量归0，按钮置灰
+            document.querySelector('.chest-count').textContent = '剩余0次';
+            btn.textContent = '暂无宝箱';
+            btn.classList.add('disabled');
+        });
+        document.getElementById('chestResultContinue').addEventListener('click', () => {
+            document.getElementById('chestResult').classList.remove('show');
+        });
+        // 打开查看奖池弹窗（替换原先的 alert）
+        document.getElementById('viewPoolBtn').addEventListener('click', () => {
+            document.getElementById('poolOverlay').classList.add('show');
+            document.getElementById('poolModal').classList.add('show');
+        });
+        // 关闭奖池弹窗
+        document.getElementById('closePoolModal').addEventListener('click', () => {
+            document.getElementById('poolOverlay').classList.remove('show');
+            document.getElementById('poolModal').classList.remove('show');
+        });
+        document.getElementById('poolOverlay').addEventListener('click', () => {
+            document.getElementById('poolOverlay').classList.remove('show');
+            document.getElementById('poolModal').classList.remove('show');
+        });
+        
+        // 索要碎片模式
+        const requestOverlay = document.getElementById('requestOverlay');
+        const puzzleSection = document.querySelector('.puzzle-section');
+        let requestMode = false;
+        
+        document.getElementById('requestBtn').addEventListener('click', function() {
+            if (this.classList.contains('disabled')) {
+                // 显示提示
+                showToast('当前拼图已集齐，请先合成');
+                return;
+            }
+            requestMode = true;
+            requestOverlay.classList.add('show');
+            puzzleSection.classList.add('request-mode');
+        });
+        
+        // 点击遮罩退出索要模式
+        requestOverlay.addEventListener('click', () => {
+            exitRequestMode();
+        });
+        
+        function exitRequestMode() {
+            requestMode = false;
+            requestOverlay.classList.remove('show');
+            puzzleSection.classList.remove('request-mode');
+        }
+        
+        // 索要模式下点击未解锁的格子
+        document.getElementById('puzzleGrid').addEventListener('click', (e) => {
+            if (!requestMode) return;
+            
+            const cell = e.target.closest('.puzzle-cell');
+            if (cell && cell.classList.contains('locked')) {
+                const cellIndex = Array.from(cell.parentNode.children).indexOf(cell);
+                const fragmentNum = cellIndex + 1;
+                
+                // 发送求捐卡片到聊天框
+                const chatMessages = document.querySelector('.chat-messages');
+                const requestCard = document.createElement('div');
+                requestCard.className = 'chat-request mine';
+                requestCard.dataset.fragment = fragmentNum;
+                requestCard.innerHTML = `
+                    <div class="chat-request-header">
+                        <span class="name">我</span>
+                        <span class="tag">求捐</span>
+                        <span class="time">刚刚</span>
+                    </div>
+                    <div class="chat-request-content">
+                        <div class="chat-fragment-icon">
+                            <img src="images/06.png" alt="碎片">
+                        </div>
+                        <div class="chat-request-info">
+                            <div class="fragment-name">${fragmentNum}号碎片</div>
+                        </div>
+                        <div class="chat-request-status waiting">
+                            <i class="fas fa-clock"></i> 等待中
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(requestCard);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 显示Toast提示
+                showToast('已向家族发送求捐请求');
+                
+                // 聊天按钮抖动
+                const chatEntry = document.getElementById('chatEntry');
+                chatEntry.classList.add('shake');
+                setTimeout(() => chatEntry.classList.remove('shake'), 1500);
+                
+                // 退出索要模式
+                exitRequestMode();
+                
+                // 启动冷却倒计时
+                startRequestCooldown();
+            }
+        });
+        
+        // Toast提示函数
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // 索要碎片冷却倒计时
+        let requestCooldownSeconds = 0;
+        const requestBtn = document.getElementById('requestBtn');
+        const requestCooldown = document.getElementById('requestCooldown');
+        
+        function startRequestCooldown() {
+            requestCooldownSeconds = 6 * 60 * 60; // 6小时
+            requestBtn.classList.add('disabled');
+            requestCooldown.classList.add('show');
+            updateRequestCooldown();
+        }
+        
+        function updateRequestCooldown() {
+            if (requestCooldownSeconds <= 0) {
+                requestBtn.classList.remove('disabled');
+                requestCooldown.classList.remove('show');
+                return;
+            }
+            
+            const hours = Math.floor(requestCooldownSeconds / 3600);
+            const minutes = Math.floor((requestCooldownSeconds % 3600) / 60);
+            const seconds = requestCooldownSeconds % 60;
+            const pad = n => n.toString().padStart(2, '0');
+            
+            requestCooldown.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            requestCooldownSeconds--;
+            
+            setTimeout(updateRequestCooldown, 1000);
+        }
+        
+        // 活动说明弹窗
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            document.getElementById('helpOverlay').classList.add('show');
+            document.getElementById('helpModal').classList.add('show');
+        });
+        document.getElementById('closeHelpModal').addEventListener('click', () => {
+            document.getElementById('helpOverlay').classList.remove('show');
+            document.getElementById('helpModal').classList.remove('show');
+        });
+        document.getElementById('helpOverlay').addEventListener('click', () => {
+            document.getElementById('helpOverlay').classList.remove('show');
+            document.getElementById('helpModal').classList.remove('show');
+        });
+        
+        // 任务弹窗
+        document.getElementById('taskBtn').addEventListener('click', () => {
+            document.getElementById('taskOverlay').classList.add('show');
+            document.getElementById('taskModal').classList.add('show');
+        });
+        document.getElementById('closeTaskModal').addEventListener('click', () => {
+            document.getElementById('taskOverlay').classList.remove('show');
+            document.getElementById('taskModal').classList.remove('show');
+        });
+        
+        // 标签页切换
+        document.querySelectorAll('.task-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabType = this.dataset.tab;
+                const taskList = document.getElementById('taskList');
+                const achievementList = document.getElementById('achievementList');
+                
+                if (tabType === 'task') {
+                    taskList.style.display = 'block';
+                    achievementList.style.display = 'none';
+                } else {
+                    taskList.style.display = 'none';
+                    achievementList.style.display = 'block';
+                }
+            });
+        });
+        
+        // 成就领取按钮
+        document.querySelectorAll('.achievement-list .task-btn.claim').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const taskItem = this.closest('.task-item');
+                
+                // 防止重复点击
+                if (this.classList.contains('claimed')) return;
+                this.classList.add('claimed');
+                
+                // 获取奖励图片和数量
+                const rewardImg = taskItem.querySelector('.task-reward-box img').src;
+                const rewardCount = taskItem.querySelector('.reward-count').textContent;
+                document.getElementById('achievementRewardIcon').src = rewardImg;
+                document.getElementById('achievementRewardCount').textContent = rewardCount;
+                
+                // 弹出奖励结果页
+                document.getElementById('achievementRewardResult').classList.add('show');
+                
+                // 替换为已领取标签
+                const completedTag = document.createElement('div');
+                completedTag.className = 'task-completed-tag';
+                completedTag.innerHTML = '<i class="fas fa-check-circle"></i><span>已领取</span>';
+                this.replaceWith(completedTag);
+                
+                // 添加完成样式
+                taskItem.classList.add('completed');
+            });
+        });
+        
+        // 关闭成就奖励结果页
+        document.getElementById('achievementRewardContinue').addEventListener('click', () => {
+            document.getElementById('achievementRewardResult').classList.remove('show');
+        });
+
+        // 签到领取按钮
+        document.getElementById('signInClaimBtn').addEventListener('click', function() {
+            const btn = this;
+            const taskItem = btn.closest('.task-item');
+            
+            // 防止重复点击
+            if (btn.classList.contains('claimed')) return;
+            btn.classList.add('claimed');
+            
+            // 获取奖励数量
+            const rewardCount = taskItem.querySelector('.reward-count').textContent;
+            document.getElementById('taskRewardCount').textContent = rewardCount;
+            
+            // 弹出奖励结果页
+            document.getElementById('taskRewardResult').classList.add('show');
+            
+            // 替换为已领取标签
+            const completedTag = document.createElement('div');
+            completedTag.className = 'task-completed-tag';
+            completedTag.innerHTML = '<i class="fas fa-check-circle"></i><span>已领取</span>';
+            btn.replaceWith(completedTag);
+            
+            // 添加完成样式
+            taskItem.classList.add('completed');
+        });
+        
+        // 关闭任务奖励结果页
+        document.getElementById('taskRewardContinue').addEventListener('click', () => {
+            document.getElementById('taskRewardResult').classList.remove('show');
+        });
+
+        // 倒计时功能
+        let totalSeconds = 1 * 24 * 3600 + 8 * 3600 + 25 * 60 + 43; // 1天 08:25:43
+        
+        function updateCountdown() {
+            if (totalSeconds <= 0) return;
+            totalSeconds--;
+            
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            const pad = n => n.toString().padStart(2, '0');
+            const daysEl = document.getElementById('countdown-days');
+            const timeEl = document.getElementById('countdown-time');
+            
+            if (days > 0) {
+                daysEl.textContent = days;
+                daysEl.style.display = '';
+                daysEl.nextElementSibling.style.display = '';
+                timeEl.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            } else {
+                daysEl.style.display = 'none';
+                daysEl.nextElementSibling.style.display = 'none';
+                timeEl.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            }
+        }
+        
+        setInterval(updateCountdown, 1000);
+
+        // 在线任务倒计时
+        let onlineSeconds = 3 * 60 + 24; // 03:24
+        
+        function updateOnlineCountdown() {
+            if (onlineSeconds <= 0) return;
+            onlineSeconds--;
+            
+            const minutes = Math.floor(onlineSeconds / 60);
+            const seconds = onlineSeconds % 60;
+            const pad = n => n.toString().padStart(2, '0');
+            
+            const el = document.getElementById('onlineCountdown');
+            if (el) {
+                el.textContent = `${pad(minutes)}:${pad(seconds)}`;
+            }
+        }
+        
+        setInterval(updateOnlineCountdown, 1000);
+
+        // 任务刷新倒计时
+        let taskRefreshSeconds = 23 * 3600 + 34 * 60 + 19; // 23:34:19
+        
+        function updateTaskRefreshCountdown() {
+            if (taskRefreshSeconds <= 0) return;
+            taskRefreshSeconds--;
+            
+            const hours = Math.floor(taskRefreshSeconds / 3600);
+            const minutes = Math.floor((taskRefreshSeconds % 3600) / 60);
+            const seconds = taskRefreshSeconds % 60;
+            const pad = n => n.toString().padStart(2, '0');
+            
+            const el = document.getElementById('taskRefreshCountdown');
+            if (el) {
+                el.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            }
+        }
+        
+        setInterval(updateTaskRefreshCountdown, 1000);
+
+        // 功能点列表点击事件
+        document.querySelectorAll('.feature-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const action = this.dataset.action;
+                switch(action) {
+                    case 'merge':
+                        // 如果当前是待合成状态，触发合成
+                        if (puzzleState === 0) {
+                            document.querySelector('.merge-btn').click();
+                        } else {
+                            showToast('当前拼图未集齐，无法合成');
+                        }
+                        break;
+                    case 'chest':
+                        document.getElementById('openChestBtn').click();
+                        break;
+                    case 'pool':
+                        document.getElementById('viewPoolBtn').click();
+                        break;
+                    case 'request':
+                        document.getElementById('requestBtn').click();
+                        break;
+                    case 'task':
+                        document.getElementById('taskBtn').click();
+                        break;
+                    case 'help':
+                        document.getElementById('helpBtn').click();
+                        break;
+                    case 'chat':
+                        document.getElementById('chatEntry').click();
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
